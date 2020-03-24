@@ -1,0 +1,256 @@
+---
+title: "blueprintHTML"
+author: "Office of Marketing and Brand Management"
+date: "3/24/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r include=FALSE}
+
+library(formatR)
+library(tidyverse)
+library(knitr)
+library(hms)
+library(kableExtra)
+library(lubridate)
+
+# invalidate cache when the tufte version changes
+knitr::opts_chunk$set(
+	echo = FALSE
+)
+options(htmltools.dir.version = FALSE)
+
+```
+
+
+
+
+
+# Description
+
+
+
+
+
+
+
+# Findings
+
+```{r data 1}
+
+
+
+FMOrig <- read.csv("file:///Z:/DAA/Marketing/MKT_output.csv", header = T, stringsAsFactors = F)
+```
+
+
+```{r}
+FM <- FMOrig %>% filter(Master_Adname_Type == "NC" )
+FM <- FM %>%
+   filter(Code_Product == "UG") %>% 
+  mutate(
+    Code_Audience = ifelse(Master_Adname == "FA20_BR_FB_VID__TL_UG_D_1", "TL", Code_Audience), 
+         Code_Product = ifelse(Master_Adname == "FA20_BR_FB_VID__TL_UG_D_1", "UG", Code_Product), 
+    
+    
+    ) %>%
+  select(1:8, 13, 15:19, 21:24, 26, 28:29, 31:39, 41) %>% 
+  select(Master_Date, everything())
+
+FM <- FM %>% 
+  mutate_at(10:31, ~replace(., is.na(.), 0)) %>% 
+  mutate(Master_Date = as.Date(Master_Date, format = "%Y-%m-%d"), 
+         Master_Results = as.numeric(Master_Results), 
+         Master_Engagements = as.numeric(Master_Engagements)) %>% 
+  arrange(Master_Date) 
+
+Start <- FM %>% 
+  mutate(AdSet = paste0(Code_RecruitingPeriod, "_",Code_Product, "_",Code_Audience, "_",Code_Vendor, "_",Code_Medium, "_",Code_Objective)) %>% 
+  group_by(AdSet) %>% summarise(Start_Date = min(Master_Date), End_Date = max(Master_Date))
+
+
+```
+
+
+```{r}
+FM <- FM %>%
+  #filter(Master_Date != "") %>% 
+   mutate(FY = ifelse(Master_Date > "2018-06-30 " & Master_Date <= "2019-06-30", "FY19",
+                             ifelse(Master_Date >= "2019-07-01 " & Master_Date < "2020-07-01", "FY20","N/A")), 
+          AdSet = paste0(Code_RecruitingPeriod, "_",Code_Product, "_",Code_Audience, "_",Code_Vendor, "_",Code_Medium, "_",Code_Objective))
+
+```
+
+```{r}
+FMQ19 <- FM%>% 
+  mutate(
+    Quarter = paste0((FY),"Q",quarter(Master_Date, with_year = FALSE, fiscal_start = 7)), 
+    #Vendor_Medium = paste0(Code_Medium, "_", Code_Vendor),
+    # Week = (cut(Master_Date + 1, "week")),
+    # Week = as.Date(Week, format = "%Y-%m-%d"), 
+    ) %>% 
+  group_by(Quarter, AdSet) %>% 
+  summarise(
+    Cost = sum(Master_Cost),
+    Clicks = sum(Master_Clicks), 
+    Impressions = round(sum(Master_Impressions),0), 
+    ClicksToSite = sum(Master_Clicks_To_Site),
+    #CTR = paste0(round(Clicks/Impressions * 100, 2), "%"), 
+    Bounces = sum(Master_Bounces),
+    Sessions = sum(Master_Sessions), 
+    UPV = sum(Master_Unique_Pageviews), 
+    Views = sum(Master_Views), 
+    Completions = sum(Master_Completions), 
+    #BounceRate = paste0(round(Bounces/Sessions * 100, 2), "%"), 
+    Step1 = sum(Master_Time_On_Page)/(sum(Master_Pageviews)- sum(Master_Exits)), 
+    Av_TOP = round_hms(as_hms(Step1), 5), 
+    ClickRatePct = round(Clicks/Impressions * 100, 2), 
+    BounceRatePct = round(Bounces/Sessions * 100, 2), 
+    ViewRate = round(Views/Impressions * 100, 2), 
+    VTR = round(Completions/Impressions *100, 2), 
+    ClickableCompletions = sum(Master_Clickable_Completions), 
+    ClickableCompRate = round(Clicks/ClickableCompletions * 100, 2), 
+    Swipes = sum(Master_Swipes), 
+    Opens = sum(Master_Clicks_To_Site), 
+    Sends = sum(Master_Sends), 
+    Engagements = sum(Master_Engagements), 
+    Results = sum(Master_Results))
+
+N <- left_join(FMQ19, Start)
+
+
+
+N %>% group_by(Quarter, AdSet) %>% summarise(n = n())
+
+```
+
+
+
+
+
+
+
+```{r data 3}
+
+colorP <- c("#F6A704", "#0E1033","#4E7B14","#A92007","#D47E0A")
+ FMVM <- N  %>% 
+   # mutate(
+   #   Product_Audience = paste0(Code_Product, "_", Code_Audience)
+   #   
+   #   ) %>%
+   group_by(Quarter,AdSet, Start_Date, End_Date) %>%
+   summarise(
+     Cost = round(sum(Cost), 2),
+     Clicks = sum(Clicks),
+     Impressions = round(sum(Impressions),0),
+     #CTR = paste0(round(Clicks/Impressions * 100, 2), "%"),
+     Bounces = sum(Bounces),
+     Sessions = sum(Sessions),
+     UPV = sum(UPV),
+     Views = sum(Views),
+     Completions = sum(Completions),
+     Step1 = sum(Step1),
+
+
+     #Av_TOP = round_hms(as_hms(Step1), 5),
+     ClickRatePct = round(Clicks/Impressions * 100, 2),
+     BounceRatePct = round(Bounces/Sessions * 100, 2),
+     ViewRate = round(Views/Impressions * 100, 2),
+     VTR = round(Completions/Impressions *100, 2),
+     ClickableCompletions = sum(ClickableCompletions),
+     ClickableCompRate = round(Clicks/ClickableCompletions * 100, 2), 
+     Swipes = sum(Swipes), 
+     SwipeUpRatePct = round(Swipes/Impressions * 100, 2),
+     Opens = sum(Opens),
+     CTOR = round(Opens/Clicks * 100, 2), 
+     Sends = sum(Sends), 
+     LIOpens = sum(Opens),
+     #LIClicks = sum(Master_Clicks_Sponsored_InMail),
+     OpenRate = round(LIOpens/Sends * 100, 2), 
+     Engagements = sum(Engagements),
+     Results = sum(Results), 
+     EngagementRate = round(Engagements/Impressions * 100, 2),
+     EngRate = round((sum(LIOpens)+sum(Engagements))/sum(Sends)*100, 2), 
+     Avg_RR = round(sum(Results)/sum(Impressions) * 100, 2)) %>%
+   select(Quarter, AdSet,Impressions, Clicks, Bounces, Sessions, Swipes, ClickRatePct, SwipeUpRatePct, UPV, BounceRatePct, #Av_TOP, 
+          VTR, CTOR,OpenRate, Sends, ViewRate, ClickableCompletions, Completions, Opens, LIOpens,  Engagements,  EngRate, EngagementRate,   Step1, Cost, Avg_RR, Results, Start_Date, End_Date) 
+ 
+
+```
+
+
+```{r Hold this}
+NewData <- FMVM %>%
+        mutate(ClickThruRate = paste0(ClickRatePct, "%"), BounceRate = paste0(BounceRatePct, "%"), Impressions = format(as.numeric(Impressions), big.mark=","), UPV = format(as.numeric(UPV),  big.mark="," ), Av_TOP = round_hms(as_hms(Step1), 5)) %>%
+         select(Quarter, AdSet, Impressions, CTR = ClickThruRate, UPV, BR = BounceRate, Start_Date, End_Date, Av_TOP, Cost) %>% filter(Impressions > 0)
+kable(NewData) %>% kable_styling(full_width = TRUE)
+```
+
+
+## FY19 Q1
+
+```{r}
+knitr::kable(
+  NewData %>% filter(Quarter == "FY19Q1") %>% select(AdSet, Impressions, CTR , UPV, BR, Av_TOP, Cost, Start_Date, End_Date)
+) %>% kable_styling(full_width = TRUE)
+
+
+```
+
+## FY19 Q2
+
+```{r}
+knitr::kable(
+  NewData%>% filter(Quarter == "FY19Q2") %>% select(AdSet, Impressions, CTR, UPV, BR, Av_TOP, Cost,Start_Date, End_Date)
+)  %>% kable_styling(full_width = TRUE)
+```
+
+## FY19 Q3
+
+```{r}
+
+
+knitr::kable(
+  NewData  %>% filter(Quarter == "FY19Q3")%>% select(AdSet, Impressions, CTR, UPV, BR, Av_TOP, Cost)) %>% kable_styling(full_width = TRUE)
+```
+
+## FY19 Q4
+
+```{r}
+knitr::kable(
+  NewData  %>% filter(Quarter == "FY19Q4")%>% select(AdSet, Impressions, CTR, UPV, BR, Av_TOP, Cost)) %>% kable_styling(full_width = TRUE)
+```
+
+## FY20 Q1
+
+```{r}
+knitr::kable(
+  NewData %>% filter(Quarter == "FY20Q1")%>% select(AdSet, Impressions, CTR, UPV, BR, Av_TOP, Cost)) %>% kable_styling(full_width = TRUE)
+```
+
+## FY20 Q2
+
+```{r}
+knitr::kable(
+  NewData %>%  filter(Quarter == "FY20Q2")%>% select(AdSet, Impressions, CTR, UPV, BR, Av_TOP, Cost)) %>% kable_styling(full_width = TRUE)
+```
+
+## FY20 Q3
+
+```{r}
+knitr::kable(
+  NewData %>%  filter(Quarter == "FY20Q3")%>% select(AdSet, Impressions, CTR, UPV, BR, Av_TOP, Cost)) %>% kable_styling(full_width = TRUE)
+```
+
+
+
+
+## Plots
+
+
+

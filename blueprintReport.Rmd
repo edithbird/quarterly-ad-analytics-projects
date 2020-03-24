@@ -1,0 +1,359 @@
+---
+title: "Marketing Report"
+subtitle: "Office of Marketing and Brand Management"
+date: "`r Sys.Date()`"
+output:
+  tufte::tufte_handout:
+    citation_package: natbib
+    latex_engine: xelatex
+  tufte::tufte_html: default
+  tufte::tufte_book:
+    citation_package: natbib
+    latex_engine: xelatex
+bibliography: skeleton.bib
+link-citations: yes
+---
+
+```{r setup, include=FALSE}
+library(tufte)
+library(ggplot2)
+library(formatR)
+library(tidyverse)
+library(knitr)
+library(hms)
+library(kableExtra)
+library(lubridate)
+library(hms)
+# invalidate cache when the tufte version changes
+knitr::opts_chunk$set(
+	echo = FALSE,
+	cache.extra = packageVersion("tufte"),
+	tidy = FALSE
+)
+options(htmltools.dir.version = FALSE)
+
+```
+
+
+
+
+
+# Description
+
+
+`r newthought('Intro text here')` Intro text here Intro text here Intro text here Intro text here Intro text here Intro text here Intro text here Intro text here. In general,
+    \href{https://blog.adstage.io/facebook-ads-benchmarks}{{\color{blue}{\underline{FB Newsfeed }}}} CTR overall experienced a 24% drop from July, 2017 - July, 2018.
+
+
+
+
+# Findings
+
+```{r data 1}
+
+
+
+FMOrig <- read.csv("file:///Z:/DAA/Marketing/MKT_output.csv", header = T, stringsAsFactors = F)
+```
+
+
+```{r start stop}
+names(FMOrig)
+
+
+
+
+```
+
+```{r}
+FM <- FMOrig %>% filter(Master_Adname_Type == "NC" )
+FM <- FM %>%
+   filter(Code_Product == "UG") %>% 
+  mutate(
+    Code_Audience = ifelse(Master_Adname == "FA20_BR_FB_VID__TL_UG_D_1", "TL", Code_Audience), 
+         Code_Product = ifelse(Master_Adname == "FA20_BR_FB_VID__TL_UG_D_1", "UG", Code_Product), 
+    
+    
+    ) %>%
+  select(1:8, 13, 15:19, 21:24, 26, 28:29, 31:39, 41) %>% 
+  select(Master_Date, everything())
+
+FM <- FM %>% 
+  mutate_at(10:31, ~replace(., is.na(.), 0)) %>% 
+  mutate(Master_Date = as.Date(Master_Date, format = "%Y-%m-%d"), 
+         Master_Results = as.numeric(Master_Results), 
+         Master_Engagements = as.numeric(Master_Engagements)) %>% 
+  arrange(Master_Date) 
+
+Start <- FM %>% 
+  mutate(AdSet = paste0(Code_RecruitingPeriod, "_",Code_Product, "_",Code_Audience, "_",Code_Vendor, "_",Code_Medium, "_",Code_Objective)) %>% 
+  group_by(AdSet) %>% summarise(Start_Date = min(Master_Date), End_Date = max(Master_Date))
+
+
+```
+
+
+```{r}
+FM <- FM %>%
+  #filter(Master_Date != "") %>% 
+   mutate(FY = ifelse(Master_Date > "2018-06-30 " & Master_Date <= "2019-06-30", "FY19",
+                             ifelse(Master_Date >= "2019-07-01 " & Master_Date < "2020-07-01", "FY20","N/A")), 
+          AdSet = paste0(Code_RecruitingPeriod, "_",Code_Product, "_",Code_Audience, "_",Code_Vendor, "_",Code_Medium, "_",Code_Objective))
+
+```
+
+```{r}
+FMQ19 <- FM%>% 
+  mutate(
+    Quarter = paste0((FY),"Q",quarter(Master_Date, with_year = FALSE, fiscal_start = 7)), 
+    #Vendor_Medium = paste0(Code_Medium, "_", Code_Vendor),
+    # Week = (cut(Master_Date + 1, "week")),
+    # Week = as.Date(Week, format = "%Y-%m-%d"), 
+    ) %>% 
+  group_by(Quarter, AdSet) %>% 
+  summarise(
+    Cost = sum(Master_Cost),
+    Clicks = sum(Master_Clicks), 
+    Impressions = round(sum(Master_Impressions),0), 
+    ClicksToSite = sum(Master_Clicks_To_Site),
+    #CTR = paste0(round(Clicks/Impressions * 100, 2), "%"), 
+    Bounces = sum(Master_Bounces),
+    Sessions = sum(Master_Sessions), 
+    UPV = sum(Master_Unique_Pageviews), 
+    Views = sum(Master_Views), 
+    Completions = sum(Master_Completions), 
+    #BounceRate = paste0(round(Bounces/Sessions * 100, 2), "%"), 
+    Step1 = sum(Master_Time_On_Page)/(sum(Master_Pageviews)- sum(Master_Exits)), 
+    Av_TOP = round_hms(as_hms(Step1), 5), 
+    ClickRatePct = round(Clicks/Impressions * 100, 2), 
+    BounceRatePct = round(Bounces/Sessions * 100, 2), 
+    ViewRate = round(Views/Impressions * 100, 2), 
+    VTR = round(Completions/Impressions *100, 2), 
+    ClickableCompletions = sum(Master_Clickable_Completions), 
+    ClickableCompRate = round(Clicks/ClickableCompletions * 100, 2), 
+    Swipes = sum(Master_Swipes), 
+    Opens = sum(Master_Clicks_To_Site), 
+    Sends = sum(Master_Sends), 
+    Engagements = sum(Master_Engagements), 
+    Results = sum(Master_Results))
+
+
+
+
+
+```
+
+
+
+
+
+
+
+```{r data 3}
+
+colorP <- c("#F6A704", "#0E1033","#4E7B14","#A92007","#D47E0A")
+ FMVM <- FMQ19  %>% 
+   # mutate(
+   #   Product_Audience = paste0(Code_Product, "_", Code_Audience)
+   #   
+   #   ) %>%
+   group_by(Quarter,AdSet) %>%
+   summarise(
+     Cost = round(sum(Cost), 2),
+     Clicks = sum(Clicks),
+     Impressions = round(sum(Impressions),0),
+     #CTR = paste0(round(Clicks/Impressions * 100, 2), "%"),
+     Bounces = sum(Bounces),
+     Sessions = sum(Sessions),
+     UPV = sum(UPV),
+     Views = sum(Views),
+     Completions = sum(Completions),
+     Step1 = sum(Step1),
+
+
+     #Av_TOP = round_hms(as_hms(Step1), 5),
+     ClickRatePct = round(Clicks/Impressions * 100, 2),
+     BounceRatePct = round(Bounces/Sessions * 100, 2),
+     ViewRate = round(Views/Impressions * 100, 2),
+     VTR = round(Completions/Impressions *100, 2),
+     ClickableCompletions = sum(ClickableCompletions),
+     ClickableCompRate = round(Clicks/ClickableCompletions * 100, 2), 
+     Swipes = sum(Swipes), 
+     SwipeUpRatePct = round(Swipes/Impressions * 100, 2),
+     Opens = sum(Opens),
+     CTOR = round(Opens/Clicks * 100, 2), 
+     Sends = sum(Sends), 
+     LIOpens = sum(Opens),
+     #LIClicks = sum(Master_Clicks_Sponsored_InMail),
+     OpenRate = round(LIOpens/Sends * 100, 2), 
+     Engagements = sum(Engagements),
+     Results = sum(Results), 
+     EngagementRate = round(Engagements/Impressions * 100, 2),
+     EngRate = round((sum(LIOpens)+sum(Engagements))/sum(Sends)*100, 2), 
+     Avg_RR = round(sum(Results)/sum(Impressions) * 100, 2)) %>%
+   select(Quarter, AdSet,Impressions, Clicks, Bounces, Sessions, Swipes, ClickRatePct, SwipeUpRatePct, UPV, BounceRatePct, #Av_TOP, 
+          VTR, CTOR,OpenRate, Sends, ViewRate, ClickableCompletions, Completions, Opens, LIOpens,  Engagements,  EngRate, EngagementRate,   Step1, Cost, Avg_RR, Results) 
+ 
+NewData <- full_join(FMVM, Start) 
+```
+
+
+```{r Hold this}
+NewData <- NewData %>%
+        mutate(ClickThruRate = paste0(ClickRatePct, "%"), BounceRate = paste0(BounceRatePct, "%"), Impressions = format(as.numeric(Impressions), big.mark=","), UPV = format(as.numeric(UPV),  big.mark="," ), Av_TOP = round_hms(as_hms(Step1), 5)) %>%
+         select(Quarter, AdSet, Impressions, CTR = ClickThruRate, UPV, BR = BounceRate, Start_Date, End_Date, Av_TOP, Cost) %>% filter(Impressions > 0)
+kable(NewData)
+```
+
+
+## FY19 Q1
+
+```{r}
+knitr::kable(
+  NewData %>% filter(Quarter == "FY19Q1") %>% select(AdSet, Impressions, CTR , UPV, BR, Av_TOP, Cost, Start_Date, End_Date)
+)
+
+
+```
+
+## FY19 Q2
+
+```{r}
+knitr::kable(
+  NewData%>% filter(Quarter == "FY19Q2") %>% select(AdSet, Impressions, CTR, UPV, BR, Av_TOP, Cost,Start_Date, End_Date)
+) 
+```
+
+## FY19 Q3
+
+```{r}
+
+
+knitr::kable(
+  NewData  %>% filter(Quarter == "FY19Q3")%>% select(AdSet, Impressions, CTR, UPV, BR, Av_TOP, Cost))
+```
+
+## FY19 Q4
+
+```{r}
+knitr::kable(
+  NewData  %>% filter(Quarter == "FY19Q4")%>% select(AdSet, Impressions, CTR, UPV, BR, Av_TOP, Cost))
+```
+
+## FY20 Q1
+
+```{r}
+knitr::kable(
+  NewData %>% filter(Quarter == "FY20Q1")%>% select(AdSet, Impressions, CTR, UPV, BR, Av_TOP, Cost))
+```
+
+## FY20 Q2
+
+```{r}
+knitr::kable(
+  NewData %>%  filter(Quarter == "FY20Q2")%>% select(AdSet, Impressions, CTR, UPV, BR, Av_TOP, Cost))
+```
+
+## FY20 Q3
+
+```{r}
+knitr::kable(
+  NewData %>%  filter(Quarter == "FY20Q3")%>% select(AdSet, Impressions, CTR, UPV, BR, Av_TOP, Cost))
+```
+
+
+
+
+## Plots
+
+
+
+
+## Margin Figures
+
+Images and graphics play an integral role in Tufte's work. To place figures in the margin you can use the **knitr** chunk option `fig.margin = TRUE`. For example:
+
+```{r fig-margin, fig.margin = TRUE, fig.cap = "MPG vs horsepower, colored by transmission.", fig.width=3.5, fig.height=3.5, cache=TRUE, message=FALSE}
+
+mtcars2 <- mtcars
+mtcars2$am <- factor(
+  mtcars$am, labels = c('automatic', 'manual')
+)
+ggplot(mtcars2, aes(hp, mpg, color = am)) +
+  geom_point() + geom_smooth() +
+  theme(legend.position = 'bottom')
+```
+
+
+
+## Sidenotes
+
+
+
+If you'd like to place ancillary information in the margin without the sidenote mark (the superscript number), you can use the `margin_note()` function from **tufte** in an inline R expression. `r margin_note("This is a margin note.  Notice that there is no number preceding the note.")` This function does not process the text with Pandoc, so Markdown syntax will not work here. If you need to write anything in Markdown syntax, please use the `marginfigure` block described previously.
+
+
+
+
+
+## Tables
+
+You can use the `kable()` function from the **knitr** package to format tables that integrate well with the rest of the Tufte handout style. The table captions are placed in the margin like figures in the HTML output.
+
+Intro text here Intro text here Intro text here Intro text here Intro text here Intro text here Intro text here Intro text here.
+Intro text here Intro text here Intro text here Intro text here Intro text here Intro text here Intro text here Intro text here.
+Intro text here Intro text here Intro text here Intro text here Intro text here Intro text here Intro text here Intro text here.
+
+
+
+
+```{r}
+knitr::kable(
+  mtcars[1:6, 1:6], caption = 'A subset of mtcars.'
+)
+```
+
+
+```{marginfigure, echo = TRUE}
+Notice that there is no number preceding the note. $x \in [a, b]$有
+$$\frac{d}{dx}\left( \int_{a}^{x} f(u)\,du\right)=f(x).$$
+```
+
+## Plots with Margin Notes
+
+Intro text here Intro text here Intro text here Intro text here Intro text here Intro text here Intro text here Intro text here.
+If you'd like to place ancillary information in the margin without the sidenote mark (the superscript number), you can use the `margin_note()` function from **tufte** in an inline R expression. 
+
+
+
+```{r fig-main, fig.cap = "Some general comments about this plot. $500 Notice the dollar sign renders.", cache=TRUE, echo = TRUE}
+ggplot(diamonds, aes(cut, price)) + geom_boxplot()
+```
+
+
+```{r}
+kable(NewData %>% arrange(AdSet))
+```
+
+
+```{marginfigure, echo = TRUE}
+Notice that there is no number preceding the note. $x \in [a, b]$有
+$$\frac{d}{dx}\left( \int_{a}^{x} f(u)\,du\right)=f(x).$$
+```
+
+# ROI
+
+Profit Profit Profit
+Profit Profit Profit
+Profit Profit Profit
+
+# Conclusion
+
+* 代码段选项
+* 代码段选项
+* 代码段选项
+
+```{r bib, include=FALSE}
+# create a bib file for the R packages used in this document
+knitr::write_bib(c('base', 'rmarkdown'), file = 'skeleton.bib')
+```
