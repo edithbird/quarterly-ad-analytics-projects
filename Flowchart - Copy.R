@@ -1,4 +1,4 @@
-library(DiagrammeR)
+? DiagrammeR
 
 
 DiagrammeR("graph TB;
@@ -12,7 +12,7 @@ DiagrammeR("graph TB;
            F-->I((Audience C));
            G-->J((Audience A contribution of web visits, CTR, expense));
            H-->J((Audience B contribution of web visits, CTR, expense));
-           I-->J((Audience C contribution of web visits, CTR, expense. Who is most valuable? Who is a drain? Any ads in particular that out perform? Number of inquiries. Compare ongoing campaigns to previous quarters.));
+           I-->J((Audience C contribution of web visits, CTR, expense. Who is most valuable? Who is a drain? Any ads in particular that out perform?));
            
            
            

@@ -1,0 +1,65 @@
+---
+title: "FA19 Undergraduate Campaign Quarterly Ad Analytics Project: FY19 Q3"
+author: "Office of Marketing and Brand Management"
+date: "3/25/2020"
+output:
+  pdf_document:
+fontsize: 11pt
+mainfont: Calibri
+sansfont: Calibri
+monofont: Calibri
+geometry: margin=1in
+---
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r include=FALSE}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(tinytex)
+library(hms)
+library(lubridate)
+library(stringr)
+```
+
+
+```{r, include=FALSE}
+options(tinytex.verbose = TRUE)
+```
+
+```{r data 1}
+#FMOrig <- read.csv("file:///Z:/DAA/Marketing/MKT_output.csv", header = T, stringsAsFactors = F)
+```
+
+## Findings
+
+
+```{r}
+NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/Flowchart.csv", header = T, stringsAsFactors = F)
+```
+
+```{r}
+NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY19Q3" & str_detect(Ad, "HS"))
+NewDataFY19Q3 <- NewDataFY19Q3[,c(4:11)]
+knitr::kable(NewDataFY19Q3, "latex", caption = "FY19 Q3 Campaign to HS Students", booktabs = T)%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45)
+```
+
+```{r}
+NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY19Q3" & str_detect(AdSet, "FA19_UG_IN_PIN_DISP_BR"))
+NewDataFY19Q3 <- NewDataFY19Q3[,c(4:11)]
+knitr::kable(NewDataFY19Q3, "latex", caption = "FY19 Q3 Campaign to Influencers", booktabs = T)%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45)
+```

@@ -35,4 +35,11 @@ It should also include an overview of the KPIs, and then a table that pertains t
 It should also include the timing and objective of each initiative that pertains to that particular campaign. 
 
 It should include what successful and what needs improvement. 
+
+Include the number of inquiries generated during this quarter.
+
+Comment on the past performance of the ongoing campaigns. 
+
+Change to portrait view.
+
 # Quarterly-Reports
