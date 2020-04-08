@@ -44,16 +44,18 @@ NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects
 
 ```{r}
 NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(Ad, "HS"))
-NewDataFY19Q3 <- NewDataFY19Q3[,c(4:11)]
-knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Campaign to HS Students", booktabs = T)%>%
+NewDataFY19Q3 <- NewDataFY19Q3[,c(4:12)]
+landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Campaign to HS Students", booktabs = T))%>%
 kable_styling(full_width = T)  %>%
   row_spec(0, angle = -45)
 ```
 
+
+
 ```{r}
 NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "FA21_UG_IN_PIN_DISP_BR"))
-NewDataFY19Q3 <- NewDataFY19Q3[,c(4:11)]
-knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Campaign to Influencers", booktabs = T)%>%
+NewDataFY19Q3 <- NewDataFY19Q3[,c(4:12)]
+landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Campaign to Influencers", booktabs = T))%>%
 kable_styling(full_width = T)  %>%
   row_spec(0, angle = -45)
 ```
