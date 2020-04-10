@@ -1,0 +1,94 @@
+---
+title: "FA20 Transfer Campaign Quarterly Ad Analytics Project: FY20 Q3"
+author: "Office of Marketing and Brand Management"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+fontsize: 11pt
+mainfont: Calibri
+sansfont: Calibri
+monofont: Calibri
+geometry: margin=1in
+---
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r include=FALSE}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(tinytex)
+library(hms)
+library(lubridate)
+library(stringr)
+```
+
+
+```{r, include=FALSE}
+options(tinytex.verbose = TRUE)
+```
+
+
+```{r}
+NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartTransfer.csv", header = T, stringsAsFactors = F)
+```
+
+```{r}
+NewDataFY19Q3 <- NewData %>% 
+  filter(
+    Quarter == "FY20Q3" & str_detect(AdSet, "TR")) %>% 
+  mutate(
+    Vendor = str_sub(AdSet, 12, 14),
+    Vendor = ifelse(str_detect(Vendor, "_"), str_sub(Vendor, 1,2), Vendor),
+    Medium = str_sub(AdSet, 15,18), 
+    Medium = ifelse(str_detect(Medium, "DIS"), "Display", ifelse(str_detect(Medium, "VI"), "Video", "Story"))) %>% select(Medium,Vendor, Impressions, CTR, UPV, BR, Av_TOP, Cost, Start_Date, End_Date) %>% arrange(Medium, Vendor)
+                                                                                              
+                                                                                             
+NewDataFY19Q3 <- NewDataFY19Q3[,c(1:10)]
+landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Transfer Campaign", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45)
+```
+
+
+```{r eval=FALSE, include=FALSE}
+NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY19Q3" & str_detect(AdSet, "TR"))
+NewDataFY19Q3 <- NewDataFY19Q3[,c(4:12)]
+knitr::kable(NewDataFY19Q3, "latex", caption = "FY19 Q3 Transfer Campaign", booktabs = T)%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45)
+```
+
+```{r}
+# NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "GR_WA"))
+# NewDataFY19Q3 <- NewDataFY19Q3[,c(4:11)]
+# knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Campaign to Influencers", booktabs = T)%>%
+# kable_styling(full_width = T)  %>%
+#   row_spec(0, angle = -45)
+```
+
+```{r}
+Forms <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/ThankYouFormCompletions.csv", header = T, stringsAsFactors = F)
+
+TrForms <- Forms %>% filter(str_detect(Initial.Referral.Source, "TR")) %>% 
+  mutate(
+    Date = as.Date(Initial.Source.Date, format = "%m/%d/%Y"),
+    FY = ifelse(Date < "2019-07-01", "FY19","FY20"), 
+    Quarter = paste0((FY),"Q",quarter(Date, with_year = FALSE, fiscal_start = 7))
+    
+  ) %>% select(FY, Quarter,Date, everything())
+
+TrForms <- TrForms %>% filter(str_detect(Initial.Referral.Source, "TR"), str_detect(Quarter, "3"))
+kable(TrForms %>%  
+        group_by(FY, Quarter) %>% 
+        summarise(`Total Inquiries this Quarter` = n()))
+```

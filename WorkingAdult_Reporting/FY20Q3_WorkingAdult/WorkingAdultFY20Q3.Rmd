@@ -1,0 +1,85 @@
+---
+title: "FA20 Transfer Campaign Quarterly Ad Analytics Project: FY20 Q3"
+author: "Office of Marketing and Brand Management"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+fontsize: 11pt
+mainfont: Calibri
+sansfont: Calibri
+monofont: Calibri
+geometry: margin=1in
+---
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r include=FALSE}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(tinytex)
+library(hms)
+library(lubridate)
+library(stringr)
+```
+
+
+```{r, include=FALSE}
+options(tinytex.verbose = TRUE)
+```
+
+
+```{r}
+NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartWorkingAdult.csv", header = T, stringsAsFactors = F)
+```
+
+__Degree Completion__
+
+```{r}
+NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" &  str_detect(AdSet, "DC" ))
+NewDataFY19Q3 <- NewDataFY19Q3[,c(4:12)]
+landscape(kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Working Adult Campaign for Degree Completion", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45)
+```
+
+```{r}
+Forms <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/ThankYouFormCompletions.csv", header = T, stringsAsFactors = F)
+
+DCForms <- Forms %>% filter(str_detect(Initial.Referral.Source,"DC")) %>% 
+  mutate(
+    Date = as.Date(Initial.Source.Date, format = "%m/%d/%Y"),
+    FY = ifelse(Date < "2019-07-01", "FY19","FY20"), 
+    Quarter = paste0((FY),"Q",quarter(Date, with_year = FALSE, fiscal_start = 7))
+    
+  ) %>% select(FY, Quarter,Date, everything())
+
+DCForms <- DCForms %>% filter(str_detect(Initial.Referral.Source, "DC"), str_detect(Quarter, "3"))
+kable(DCForms %>%  
+        group_by(FY, Quarter) %>% 
+        summarise(`Total Inquiries this Quarter` = n()))
+```
+
+
+* Working Adults are being targeted in promotion of the degree completion program. 
+
+```{r}
+
+
+# __Graduate Degree__
+# NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet,"GR" ))
+# NewDataFY19Q3 <- NewDataFY19Q3[,c(4:12)]
+# landscape(kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Working Adult Campaign", booktabs = T))%>%
+# kable_styling(full_width = T)  
+#%>%
+  #row_spec(0, angle = -45)
+```

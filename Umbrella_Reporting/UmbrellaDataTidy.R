@@ -1,5 +1,5 @@
 
-r include=FALSE
+
 library(dplyr)
 library(knitr)
 library(kableExtra)
@@ -18,7 +18,7 @@ FMOrig <- read.csv("file:///Z:/DAA/Marketing/MKT_output.csv", header = T, string
 
 FM <- FMOrig %>% filter(Master_Adname_Type == "NC" )
 FM <- FM %>%
-  filter(Code_Product == "GR") %>% 
+  filter(Code_Product == "UNI") %>% 
   mutate(
     Code_Audience = ifelse(Master_Adname == "FA20_BR_FB_VID__TL_UG_D_1", "TL", Code_Audience), 
     Code_Product = ifelse(Master_Adname == "FA20_BR_FB_VID__TL_UG_D_1", "UG", Code_Product)) %>%
@@ -129,4 +129,4 @@ NewData <- NewData %>%
          End_Date = format(as.Date(End_Date), "%m-%y")) %>%
   select(Quarter, AdSet, Ad,Vendor,Impressions, CTR = ClickThruRate, UPV, BR = BounceRate, Av_TOP, Cost, Start_Date, End_Date) %>% filter(Impressions > 0)
 
-write.csv(NewData, "C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartGrad.csv", row.names = F)
+write.csv(NewData, "C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartUmbrella.csv", row.names = F)

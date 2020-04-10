@@ -1,5 +1,5 @@
 
-r include=FALSE
+
 library(dplyr)
 library(knitr)
 library(kableExtra)
@@ -12,13 +12,13 @@ library(stringr)
 
  
 
-FMOrig <- read.csv("file:///Z:/DAA/Marketing/MKT_output.csv", header = T, stringsAsFactors = F)
+FMOrig <- read.csv("C:/Users/christine.iyer/Downloads/MKT_output (1).csv", header = T, stringsAsFactors = F)
  
 
 
 FM <- FMOrig %>% filter(Master_Adname_Type == "NC" )
 FM <- FM %>%
-  filter(Code_Product == "UG") %>% 
+  filter(Code_Product == "GR") %>% 
   mutate(
     Code_Audience = ifelse(Master_Adname == "FA20_BR_FB_VID__TL_UG_D_1", "TL", Code_Audience), 
     Code_Product = ifelse(Master_Adname == "FA20_BR_FB_VID__TL_UG_D_1", "UG", Code_Product)) %>%
@@ -27,7 +27,7 @@ FM <- FM %>%
 
 FM <- FM %>% 
   mutate_at(10:31, ~replace(., is.na(.), 0)) %>% 
-  mutate(Master_Date = as.Date(Master_Date, format = "%Y-%m-%d"), 
+  mutate(Master_Date = as.Date(Master_Date, format = "%m/%d/%Y"), 
          Master_Results = as.numeric(Master_Results), 
          Master_Engagements = as.numeric(Master_Engagements)) %>% 
   arrange(Master_Date) 
@@ -51,10 +51,7 @@ FM <- FM %>%
 FMQ19 <- FM%>% 
   mutate(
     Quarter = paste0((FY),"Q",quarter(Master_Date, with_year = FALSE, fiscal_start = 7))
-    #, 
-    #Vendor_Medium = paste0(Code_Medium, "_", Code_Vendor),
-    # Week = (cut(Master_Date + 1, "week")),
-    # Week = as.Date(Week, format = "%Y-%m-%d"), 
+    
   ) %>% 
   group_by(Quarter, AdSet, Ad, Vendor) %>% 
   summarise(
@@ -132,4 +129,4 @@ NewData <- NewData %>%
          End_Date = format(as.Date(End_Date), "%m-%y")) %>%
   select(Quarter, AdSet, Ad,Vendor,Impressions, CTR = ClickThruRate, UPV, BR = BounceRate, Av_TOP, Cost, Start_Date, End_Date) %>% filter(Impressions > 0)
 
-write.csv(NewData, "C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/Flowchart.csv", row.names = F)
+write.csv(NewData, "C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartGrad.csv", row.names = F)

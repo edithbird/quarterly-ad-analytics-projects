@@ -42,19 +42,43 @@ options(tinytex.verbose = TRUE)
 NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartGrad.csv", header = T, stringsAsFactors = F)
 ```
 
+
+
+
+__All Audiences__
+
+
+
 ```{r}
 NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "GR_ALL"))
-NewDataFY19Q3 <- NewDataFY19Q3[,c(4:11)]
-knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Graduate Campaign", booktabs = T)%>%
+NewDataFY19Q3 <- NewDataFY19Q3[,c(4:12)]
+landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Graduate Campaign Targeting All Audiences", booktabs = T))%>%
 kable_styling(full_width = T)  %>%
   row_spec(0, angle = -45)
 ```
 
+```{r}
+Forms <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/ThankYouFormCompletions.csv", header = T, stringsAsFactors = F)
+
+DCForms <- Forms %>% filter(str_detect(Initial.Referral.Source,"GR")) %>% 
+  mutate(
+    Date = as.Date(Initial.Source.Date, format = "%m/%d/%Y"),
+    FY = ifelse(Date < "2019-07-01", "FY19","FY20"), 
+    Quarter = paste0((FY),"Q",quarter(Date, with_year = FALSE, fiscal_start = 7))
+    
+  ) %>% select(FY, Quarter,Date, everything())
+
+DCForms <- DCForms %>% filter(str_detect(Initial.Referral.Source, "GR"), str_detect(Quarter, "3"))
+kable(DCForms %>%  
+        group_by(FY, Quarter) %>% 
+        summarise(`Total Inquiries this Quarter` = n()))
+```
 
 ```{r}
+#__All Audiences__
 # NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "GR_CU"))
-# NewDataFY19Q3 <- NewDataFY19Q3[,c(4:11)]
-# knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Graduate Campaign", booktabs = T)%>%
+# NewDataFY19Q3 <- NewDataFY19Q3[,c(4:12)]
+# landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Graduate Campaign Targeting All Audiences", booktabs = T))%>%
 # kable_styling(full_width = T)  %>%
 #   row_spec(0, angle = -45)
 ```
@@ -66,3 +90,5 @@ kable_styling(full_width = T)  %>%
 # kable_styling(full_width = T)  %>%
 #   row_spec(0, angle = -45)
 ```
+
+* This quarter ads are targeting multiple audiences. 
