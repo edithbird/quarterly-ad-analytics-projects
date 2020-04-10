@@ -125,8 +125,8 @@ NewData <- NewData %>%
          UPV = format(as.numeric(UPV),  big.mark="," ),
          Cost = paste0("$ ", Cost),
          Av_TOP = round_hms(as_hms(Step1), 5), 
-         Start_Date = format(as.Date(Start_Date), "%m-%y"), 
-         End_Date = format(as.Date(End_Date), "%m-%y"),  
+         Start_Date = format(as.Date(Start_Date), "%m-%Y"), 
+         End_Date = format(as.Date(End_Date), "%m-%Y"), 
          End_Date = ifelse(End_Date == format(Sys.Date(),"%m-%Y"), "Ongoing", End_Date)) %>%
   select(Quarter, AdSet, Ad,Vendor,Impressions, CTR = ClickThruRate, UPV, BR = BounceRate, Av_TOP, Cost, Start_Date, End_Date) %>% filter(Impressions > 0)
 

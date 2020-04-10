@@ -30,6 +30,7 @@ library(tinytex)
 library(hms)
 library(lubridate)
 library(stringr)
+library(tidyr)
 ```
 
 
@@ -43,22 +44,56 @@ NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects
 ```
 
 ```{r}
-NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(Ad, "HS"))
-NewDataFY19Q3 <- NewDataFY19Q3[,c(4:12)]
-landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Campaign to HS Students", booktabs = T))%>%
+NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "HS")) %>%  separate(Vendor, c("Vendor", "Medium")) %>% select(Medium, Vendor, Quarter, Impressions:End_Date) %>% arrange(Medium, Vendor)
+#NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
+landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Graduate Campaign Targeting All Audiences", booktabs = T))%>%
 kable_styling(full_width = T)  %>%
-  row_spec(0, angle = -45)
+  row_spec(0, angle = -45) %>%
+  pack_rows("Display", 1, 4) %>%
+  pack_rows("Video", 7, 13) %>%
+  pack_rows("Instagram Stories", 5, 6) 
+  
+```
+
+```{r}
+NewDataFY19Q3 <-  NewDataFY19Q3 %>%
+  mutate(Vendor = Vendor, 
+         Medium = Medium,
+         Impressions = Impressions,
+    CTR = cell_spec(CTR, "latex", color = ifelse(CTR == "0.38%", "red", "black")),
+    UPV = UPV, 
+    Cost = cell_spec(Cost, "latex", color = ifelse(Cost == "$ 4939.1", "red", "black"))
+    
+  ) %>%
+  select(Vendor, Impressions,CTR, UPV,Cost)
+
+
+landscape(kable(NewDataFY19Q3, format = "latex", escape = F, caption = "FY20 Q3 Graduate Campaign Targeting All Audiences", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Display", 1, 4) %>%
+  pack_rows("Video", 7, 13) %>%
+  pack_rows("Instagram Stories", 5, 6) 
+
+
+  # kable(format = "latex", escape = F, booktabs = T) %>%
+  # kable_styling(full_width = T)%>%
+  # row_spec(0, angle = -45) %>%
+  # pack_rows("Display", 1, 4)%>%
+  # pack_rows("IG Stories", 5, 6)%>%
+  # pack_rows("Video", 7, 13)
 ```
 
 
+  
 
 ```{r}
-NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "FA21_UG_IN_PIN_DISP_BR"))
-NewDataFY19Q3 <- NewDataFY19Q3[,c(4:12)]
-landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Campaign to Influencers", booktabs = T))%>%
-kable_styling(full_width = T)  
-# %>%
-#   row_spec(0, angle = -45)
+NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "FA21_UG_IN_PIN_DISP_BR")) %>%  separate(Vendor, c("Vendor", "Medium")) %>% select(Medium, Vendor, Quarter, Impressions:End_Date) %>% arrange(Medium, Vendor)
+#NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
+landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Graduate Campaign Targeting All Audiences", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) 
+  
 ```
 
 Inquiries

@@ -30,11 +30,13 @@ library(tinytex)
 library(hms)
 library(lubridate)
 library(stringr)
+library(tidyr)
 ```
 
 
 ```{r, include=FALSE}
 options(tinytex.verbose = TRUE)
+options(knitr.table.format = "latex")
 ```
 
 
@@ -44,12 +46,46 @@ NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects
 
 __Out-of-State HS Students__
 
+
+
 ```{r}
-NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" )
-NewDataFY19Q3 <- NewDataFY19Q3[,c(4:12)]
-landscape(kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Travel Campaign for a High School Students", booktabs = T))%>%
+
+
+
+NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3") %>%  separate(Vendor, c("Vendor", "Medium")) %>% 
+  select(Medium, Vendor, Quarter, Impressions:End_Date) %>% arrange(Medium, Vendor)
+
+color.me <- which(NewDataFY19Q3$CTR == "0.18%")
+#NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
+landscape(knitr::kable(NewDataFY19Q3, "latex",caption = "FY20 Q3 Graduate Campaign Targeting All Audiences", booktabs = T))%>%
 kable_styling(full_width = T)  %>%
-  row_spec(0, angle = -45)
+  row_spec(0, angle = -45) %>%
+  pack_rows("Display", 1, 1) %>%
+  pack_rows("Video", 2, 3) 
+# %>%
+#   row_spec(color.me, bold = T, color = "red", background = "white")
+```
+
+```{r}
+
+```
+
+
+* Bullet One
+
+* Bullet Two
+
+
+
+```{r}
+NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY19Q3" )%>%  separate(Vendor, c("Vendor", "Medium")) %>% select(Medium, Vendor, Quarter, Impressions:End_Date) %>% arrange(Medium, Vendor)
+#NewDataFY19Q3 <- NewDataFY19Q3[,c(4:12)]
+landscape(kable(NewDataFY19Q3, "latex", caption = "FY19 Q3 Travel Campaign for a High School Students", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Carousel", 1, 2)%>%
+  pack_rows("Display", 3, 5)%>%
+  pack_rows("Video", 6, 7)
 ```
 
 
@@ -67,7 +103,44 @@ kable_styling(full_width = T)  %>%
   #row_spec(0, angle = -45)
 ```
 
+```{r eval=FALSE, include=FALSE}
+mtcars[1:10, 1:2] %>%
+  mutate(
+    car = row.names(.),
+    mpg = cell_spec(mpg, "latex", color = ifelse(mpg > 20, "red", "blue")),
+    cyl = cell_spec(cyl, "latex", color = "white", align = "c", angle = 45, 
+                    background = factor(cyl, c(4, 6, 8), 
+                                        c("#666666", "#999999", "#BBBBBB")))
+  ) %>%
+  select(car, mpg, cyl) %>%
+  kable(format = "latex", escape = F) %>%
+  kable_styling(full_width = F)
+```
 
-```{r}
+```{r eval=FALSE, include=FALSE}
+NewDataFY19Q3[1:7, 1:11] %>%
+  mutate(Vendor = Vendor, 
+         Medium = Medium,
+    CTR = cell_spec(CTR, "latex", color = ifelse(CTR == "0.34%", "red", "black")),
+    UPV = cell_spec(UPV, "latex", color = "white", align = "c", angle = 45, 
+                    background = factor(UPV, c("80", "43", "465","199", "96", "229", "80"), 
+                                        c("#666666", "#999999", "#BBBBBB","#666666", "#999999", "#BBBBBB","#666666"))), 
+    Cost = cell_spec(Cost, "latex", color = ifelse(Cost == "$ 2842.45", "red", "black"))
+    
+  ) %>%
+  select(Medium, Vendor,CTR, UPV,Cost) %>%
+  kable(format = "latex", escape = F) %>%
+  kable_styling(full_width = F)%>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Carousel", 1, 2)%>%
+  pack_rows("Display", 3, 5)%>%
+  pack_rows("Video", 6, 7)
+```
 
+```{r eval=FALSE, include=FALSE}
+NewDataFY19Q3[1:7, 1:11] %>%
+  mutate(
+    CTR = cell_spec(CTR, "latex", color = ifelse(CTR == "0.34%", "red", "black"))) %>%
+  kable(format = "latex", escape = FALSE) %>%
+  kable_styling("striped", full_width = F)
 ```
