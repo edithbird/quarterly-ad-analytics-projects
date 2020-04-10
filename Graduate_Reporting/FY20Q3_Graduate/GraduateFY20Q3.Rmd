@@ -29,6 +29,7 @@ library(kableExtra)
 library(tinytex)
 library(hms)
 library(lubridate)
+library(tidyr)
 library(stringr)
 ```
 
@@ -50,11 +51,11 @@ __All Audiences__
 
 
 ```{r}
-NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "GR_ALL"))
-NewDataFY19Q3 <- NewDataFY19Q3[,c(4:12)]
+NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "GR_ALL")) %>%  separate(Vendor, c("Vendor", "Medium")) %>% select(Medium, Vendor, Quarter, Impressions:End_Date) %>% arrange(Medium, Vendor)
+#NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
 landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Graduate Campaign Targeting All Audiences", booktabs = T))%>%
 kable_styling(full_width = T)  %>%
-  row_spec(0, angle = -45)
+  row_spec(0, angle = -45) 
 ```
 
 ```{r}
