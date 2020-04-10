@@ -7,13 +7,13 @@ library(tinytex)
 library(hms)
 library(lubridate)
 library(stringr)
- 
 
 
- 
 
-FMOrig <- read.csv("C:/Users/christine.iyer/Downloads/MKT_output (1).csv", header = T, stringsAsFactors = F)
- 
+
+
+FMOrig <- read.csv("C:/Users/christine.iyer/Downloads/MKT_output (2).csv", header = T, stringsAsFactors = F)
+
 
 
 FM <- FMOrig %>% filter(Master_Adname_Type == "NC" )
@@ -35,7 +35,7 @@ FM <- FM %>%
 Start <- FM %>% 
   mutate(AdSet = paste0(Code_RecruitingPeriod, "_",Code_Product, "_",Code_Audience, "_",Code_Vendor, "_",Code_Medium, "_",Code_Objective)) %>% 
   group_by(AdSet) %>% summarise(Start_Date = min(Master_Date), End_Date = max(Master_Date))
- 
+
 
 
 
@@ -45,9 +45,9 @@ FM <- FM %>%
          AdSet = paste0(Code_RecruitingPeriod, "_",Code_Product, "_",Code_Audience, "_",Code_Vendor, "_",Code_Medium, "_",Code_Objective), 
          Ad = paste0(Code_Audience, "_",Code_Vendor, "_",Code_Medium), 
          Vendor = paste0(Code_Vendor, "_",Code_Medium))
- 
 
-  
+
+
 FMQ19 <- FM%>% 
   mutate(
     Quarter = paste0((FY),"Q",quarter(Master_Date, with_year = FALSE, fiscal_start = 7))
@@ -77,7 +77,7 @@ FMQ19 <- FM%>%
     Sends = sum(Master_Sends), 
     Engagements = sum(Master_Engagements), 
     Results = sum(Master_Results))
- 
+
 
 
 colorP <- c("#F6A704", "#0E1033","#4E7B14","#A92007","#D47E0A")
@@ -113,7 +113,7 @@ FMVM <- FMQ19  %>%
     Avg_RR = round(sum(Results)/sum(Impressions) * 100, 2)) %>%
   select(Quarter, AdSet,Ad,Vendor,Impressions, Clicks, Bounces, Sessions, Swipes, ClickRatePct, SwipeUpRatePct, UPV, BounceRatePct, VTR, CTOR,OpenRate, Sends, ViewRate, ClickableCompletions, Completions, Opens, LIOpens,  Engagements,  EngRate, EngagementRate,   Step1, Cost, Avg_RR, Results) 
 NewData <- full_join(FMVM, Start) 
- 
+
 
 ## Findings
 
