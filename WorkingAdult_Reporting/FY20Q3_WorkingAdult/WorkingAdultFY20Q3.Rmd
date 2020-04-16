@@ -40,17 +40,143 @@ options(tinytex.verbose = TRUE)
 
 
 ```{r}
-NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartWorkingAdult.csv", header = T, stringsAsFactors = F)
+NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartWorkingAdult_V2.csv", header = T, stringsAsFactors = F)
+```
+
+```{r}
+NewDataFY20 <-  NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "WA")) %>%  
+  separate(Vendor, c("Vendor", "Medium")) %>% 
+  mutate(Start_Date = as.Date(
+    Start_Date, format = "%Y-%m-%d"), 
+    End_Date = as.Date(End_Date, format = "%Y-%m-%d" )) %>% 
+  
+  group_by(Medium, Vendor) %>% 
+  summarise(
+    Clicks = sum(Clicks), 
+    Impressions = sum(Impressions), 
+    Bounces = sum(Bounces), 
+    Sessions = sum(Sessions), 
+    UPV = sum(UPV),
+    Views = sum(Views),
+    Completions = sum(Completions),
+    Step1 = sum(Step1),
+    ClickRatePct = round(Clicks/Impressions * 100, 2),
+    BounceRatePct = round(Bounces/Sessions * 100, 2),
+    ViewRate = round(Views/Impressions * 100, 2),
+    VTR = round(Completions/Impressions *100, 2),
+    Cost = sum(Cost),
+    Start_Date_New = min(Start_Date),
+    End_Date_New = max(End_Date)
+  ) %>% 
+  mutate(ClickThruRate = paste0(ClickRatePct, "%"),
+         BounceRate = paste0(BounceRatePct, "%"),
+         Impressions = format(as.numeric(Impressions), big.mark=","), 
+         UPV = format(as.numeric(UPV),  big.mark="," ),
+         Cost = paste0("$ ", Cost),
+         Av_TOP = round_hms(as_hms(Step1), 5), 
+         Start_Date = format(as.Date(Start_Date_New), "%m-%Y"), 
+         End_Date = format(as.Date(End_Date_New), "%m-%Y"), 
+         End_Date = ifelse(End_Date == format(Sys.Date(),"%m-%Y"), "Ongoing", End_Date)) %>% 
+  select(
+    Medium, 
+    Vendor, 
+    Impressions, 
+    ClickThruRate, 
+    UPV, 
+    BounceRate, 
+    Av_TOP, 
+    Cost,
+    Start_Date, 
+    End_Date
+  )
+  
+```
+
+
+```{r}
+# NewData2 <- NewData %>% 
+#   group_by(Medium, Vendor)
 ```
 
 __Degree Completion__
 
 ```{r}
-NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "WA")) %>%  separate(Vendor, c("Vendor", "Medium")) %>% select(Medium, Vendor, Quarter, Impressions:End_Date) %>% arrange(Medium, Vendor)
+NewDataFY19Q3 <- NewDataFY20 %>%  select(Medium:End_Date) %>% arrange(Medium, Vendor)
 #NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
 landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Graduate Campaign Targeting All Audiences", booktabs = T))%>%
 kable_styling(full_width = T)  %>%
-  row_spec(0, angle = -45) 
+  row_spec(0, angle = -45) %>%
+  pack_rows("Display", 1, 3) %>%
+  pack_rows("Text", 4, 5) %>%
+  pack_rows("Video", 6, 7)
+  
+```
+
+```{r}
+NewDataFY19 <-  NewData %>% filter(Quarter == "FY19Q3" & str_detect(AdSet, "WA")) %>%  
+  separate(Vendor, c("Vendor", "Medium")) %>% 
+  mutate(Start_Date = as.Date(
+    Start_Date, format = "%Y-%m-%d"), 
+    End_Date = as.Date(End_Date, format = "%Y-%m-%d" )) %>% 
+  
+  group_by(Medium, Vendor) %>% 
+  summarise(
+    Clicks = sum(Clicks), 
+    Impressions = sum(Impressions), 
+    Bounces = sum(Bounces), 
+    Sessions = sum(Sessions), 
+    UPV = sum(UPV),
+    Views = sum(Views),
+    Completions = sum(Completions),
+    Step1 = sum(Step1),
+    ClickRatePct = round(Clicks/Impressions * 100, 2),
+    BounceRatePct = round(Bounces/Sessions * 100, 2),
+    ViewRate = round(Views/Impressions * 100, 2),
+    VTR = round(Completions/Impressions *100, 2),
+    Cost = sum(Cost),
+    Start_Date_New = min(Start_Date),
+    End_Date_New = max(End_Date)
+  ) %>% 
+  mutate(ClickThruRate = paste0(ClickRatePct, "%"),
+         BounceRate = paste0(BounceRatePct, "%"),
+         Impressions = format(as.numeric(Impressions), big.mark=","), 
+         UPV = format(as.numeric(UPV),  big.mark="," ),
+         Cost = paste0("$ ", Cost),
+         Av_TOP = round_hms(as_hms(Step1), 5), 
+         Start_Date = format(as.Date(Start_Date_New), "%m-%Y"), 
+         End_Date = format(as.Date(End_Date_New), "%m-%Y"), 
+         End_Date = ifelse(End_Date == format(Sys.Date(),"%m-%Y"), "Ongoing", End_Date)) %>% 
+  select(
+    Medium, 
+    Vendor, 
+    Impressions, 
+    ClickThruRate, 
+    UPV, 
+    BounceRate, 
+    Av_TOP, 
+    Cost,
+    Start_Date, 
+    End_Date
+  )
+  
+```
+
+
+```{r}
+# NewData2 <- NewData %>% 
+#   group_by(Medium, Vendor)
+```
+
+__Degree Completion__
+
+```{r}
+NewDataFY19Q3 <- NewDataFY19 %>%  select(Medium:End_Date) %>% arrange(Medium, Vendor)
+#NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
+landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY19 Q3 Graduate Campaign Targeting All Audiences", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Display", 1, 3) %>%
+  pack_rows("Text", 4, 6)
   
 ```
 
@@ -74,14 +200,6 @@ kable(DCForms %>%
 
 * Working Adults are being targeted in promotion of the degree completion program. 
 
-```{r}
+* 
 
 
-# __Graduate Degree__
-# NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet,"GR" ))
-# NewDataFY19Q3 <- NewDataFY19Q3[,c(4:12)]
-# landscape(kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Working Adult Campaign", booktabs = T))%>%
-# kable_styling(full_width = T)  
-#%>%
-  #row_spec(0, angle = -45)
-```

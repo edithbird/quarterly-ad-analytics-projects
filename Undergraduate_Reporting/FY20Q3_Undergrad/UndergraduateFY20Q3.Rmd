@@ -123,7 +123,9 @@ Conclusions:
 
 * __Programmatic Display__: Doing well. FY20 is the first year where digital ads are targeted to different audiences. Each quarter has shown growth in click-thru-rates (CTR). Unique Pageviews (UPV) have almost doubled since last quarter while the cost has been stable.
 
-* __Facebook Display__: The quarterly CTR is below that of the same quarter last year and is slightly down from last quarter to from last quarter. UPV are down from last quarter but up from the same quarter last year. The CTR has consistently been below 0.45%, the USM established benchmark. 
+*Roses are \textcolor{red}{red}, violets are \textcolor{blue}{blue}.
+
+* __Facebook Display__: The quarterly CTR is \textcolor{red}{below} that of the same quarter last year and is \textcolor{red}{slightly down this quarter to from Q2}. UPV are down from last quarter but up from the same quarter last year. The CTR has consistently been below 0.45%, the USM established benchmark. 
 
 * __Instagram Display__: The  CTR continues to be above the national benchmark. While this platform has never been a major source of web traffic, UPV have consistently been higher in FY20 as compared to FY19.
 
