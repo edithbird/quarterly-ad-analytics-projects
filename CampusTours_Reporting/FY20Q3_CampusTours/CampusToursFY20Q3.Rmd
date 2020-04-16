@@ -52,19 +52,50 @@ NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" ) %>%  separate(Vendor, 
 
 landscape(kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Campus Tours Campaign for High School Audiences", booktabs = T))%>%
 kable_styling(full_width = T)  %>%
- row_spec(0, angle = -45)
+ row_spec(0, angle = -45)%>%
+  pack_rows("Display", 1, 3) %>%
+  pack_rows("Video", 4, 5)
 ```
+* The advertising campaign for campus tours has performed very well this quarter, despite the COVID-19 mandate to quarentine, bringing March attendance to nearly zero. 
+
+* Changes from the FY19 campus tours campaign included the addition of  Programmatic (DBM) display and Snapchat video platforms. 
+
+* DBM saw a high overall CTR, 0.14% and brought over 1,800 unique pageviews. 
+
+* Snapchat Video also did well, exceeding the national CTR benchmark. The platform drove ~8,700 unique pageviews, providing great University exposure.
+
+* Facebook display CTR was \textcolor{red}{down} to 0.38% , a 21% drop from FY19 Q3. Fortunately FB spending was way down this year from last and the money was reallocated to other platforms. 
+
+* According to the Salesforce database, tour attendance FY20 Q3 is up 23% from the same period last year. Undoubtedly, the numbers would have been very strong were it not for the quarentine. Given the exponential growth in web traffic this year, it's logical to conclude that this advertising campaign contributed to the growth in tour numbers.
 
 * Event Registration changed to Virtual Tour ads which began 4/1/2020. 
 
+* Roses are \textcolor{red}{red}, violets are \textcolor{blue}{blue}.
+
+
+__Tour Registrants Q3: FY20 vs FY19__
+
 ```{r}
+Tours <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/CampusTours_Reporting/Q3ToursCompare.csv", header = T, stringsAsFactors = F)
 
 
-# __Graduate Degree__
-# NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet,"GR" ))
-# NewDataFY19Q3 <- NewDataFY19Q3[,c(4:12)]
-# landscape(kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Working Adult Campaign", booktabs = T))%>%
-# kable_styling(full_width = T)  
-#%>%
-  #row_spec(0, angle = -45)
+Tours <- Tours %>% mutate(Date = as.Date(Start.Date.Time, format = "%m/%d/%Y %H:%M"))
+
+Tours$Date <- format(as.Date(Tours$Date), "%Y")
+kable(Tours %>% group_by(Date) %>% summarise(`Confirmed Registrants` = sum(Confirmed.Registrants), Attendants = sum(Attended)) %>% select(Date, `Confirmed Registrants`, Attendants))
+```
+
+
+
+```{r eval=FALSE, include=FALSE}
+#__FY19 Q3 Campus Tours (for comparison)__
+
+NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY19Q3" ) %>%  separate(Vendor, c("Vendor", "Medium")) %>% select(Medium, Vendor, Quarter, Impressions:End_Date) %>% arrange(Medium, Vendor)
+
+landscape(kable(NewDataFY19Q3, "latex", caption = "FY19 Q3 Campus Tours Campaign for High School Audiences", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+ row_spec(0, angle = -45)%>%
+  pack_rows("Carousel", 1, 2) %>%
+  pack_rows("Display", 3, 5)%>%
+  pack_rows("Video",6, 7)
 ```

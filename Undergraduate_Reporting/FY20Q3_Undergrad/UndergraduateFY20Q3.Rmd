@@ -44,9 +44,13 @@ NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects
 ```
 
 ```{r}
-NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "HS")) %>%  separate(Vendor, c("Vendor", "Medium")) %>% select(Medium, Vendor, Quarter, Impressions:End_Date) %>% arrange(Medium, Vendor)
+NewDataFY19Q3 <- NewData %>% 
+  filter(Quarter == "FY20Q3" & str_detect(AdSet, "HS")) %>%
+  separate(Vendor, c("Vendor", "Medium")) %>% 
+  select(Medium, Vendor, Quarter, Impressions:End_Date) %>% 
+  arrange(Medium, Vendor)
 #NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
-landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Graduate Campaign Targeting All Audiences", booktabs = T))%>%
+landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Undergraduate Campaign Targeting In-State High School Students and their Influencers", booktabs = T))%>%
 kable_styling(full_width = T)  %>%
   row_spec(0, angle = -45) %>%
   pack_rows("Display", 1, 4) %>%
@@ -55,7 +59,7 @@ kable_styling(full_width = T)  %>%
   
 ```
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 NewDataFY19Q3 <-  NewDataFY19Q3 %>%
   mutate(Vendor = Vendor, 
          Medium = Medium,
@@ -114,5 +118,26 @@ kable(DCForms %>%
         group_by(FY, Quarter) %>% 
         summarise(`Total Inquiries this Quarter` = n()))
 ```
+
+Conclusions:
+
+* __Programmatic Display__: Doing well. FY20 is the first year where digital ads are targeted to different audiences. Each quarter has shown growth in click-thru-rates (CTR). Unique Pageviews (UPV) have almost doubled since last quarter while the cost has been stable.
+
+* __Facebook Display__: The quarterly CTR is below that of the same quarter last year and is slightly down from last quarter to from last quarter. UPV are down from last quarter but up from the same quarter last year. The CTR has consistently been below 0.45%, the USM established benchmark. 
+
+* __Instagram Display__: The  CTR continues to be above the national benchmark. While this platform has never been a major source of web traffic, UPV have consistently been higher in FY20 as compared to FY19.
+
+* __Instagram Stories__: We do not have benchmarks for this platform, however since last quarter, which was first time we started differentiating them from IG video, we have seen consistent view rates at 88%  and VTR at 0.8%. As we have increased spending, we have seen a commensurate increase in web traffic.
+
+* __Snapchat Video__: Snapchat continues to show strong CTR at the national benchmark. Also Q3's strong growth in UPV is in large part due this platform. While it has a bounce rate in the high 90's, it seems that USM would be getting a great deal of visibility.
+
+* __Youtube Video__: The view rate is slightly down from last quarter, it continues to be well above the national benchmark of 20%.
+
+* __Facebook Video__: While we do not have benchmarks, we see view rates have been stable for 7 quarters. 
+
+* __Instagram Video__: We do not have benchmarks for this platform, but can see that view rates have been stable over the last 7 quarters and are higher in FY20 than they were in FY19. Moving forward, it would be good if Rinck could update us on benchmarks and expectations for both IG and FB.
+
+
+
 
 
