@@ -1,5 +1,5 @@
 ---
-title: "FA20 Transfer Campaign Quarterly Ad Analytics Project: FY20 Q3"
+title: "FA20 Working Adult Campaign Quarterly Ad Analytics Project: FY20 Q3"
 author: "Office of Marketing and Brand Management"
 date: "`r Sys.Date()`"
 output:
@@ -42,6 +42,9 @@ options(tinytex.verbose = TRUE)
 ```{r}
 NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartWorkingAdult_V2.csv", header = T, stringsAsFactors = F)
 ```
+
+
+
 
 ```{r}
 NewDataFY20 <-  NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "WA")) %>%  
@@ -103,7 +106,7 @@ __Degree Completion__
 ```{r}
 NewDataFY19Q3 <- NewDataFY20 %>%  select(Medium:End_Date) %>% arrange(Medium, Vendor)
 #NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
-landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Graduate Campaign Targeting All Audiences", booktabs = T))%>%
+landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Campaign Review: Working Adults", booktabs = T))%>%
 kable_styling(full_width = T)  %>%
   row_spec(0, angle = -45) %>%
   pack_rows("Display", 1, 3) %>%
@@ -172,7 +175,7 @@ __Degree Completion__
 ```{r}
 NewDataFY19Q3 <- NewDataFY19 %>%  select(Medium:End_Date) %>% arrange(Medium, Vendor)
 #NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
-landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY19 Q3 Graduate Campaign Targeting All Audiences", booktabs = T))%>%
+landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY19 Q3 Campaign Targeting Working Adults", booktabs = T))%>%
 kable_styling(full_width = T)  %>%
   row_spec(0, angle = -45) %>%
   pack_rows("Display", 1, 3) %>%
@@ -198,8 +201,72 @@ kable(DCForms %>%
 ```
 
 
-* Working Adults are being targeted in promotion of the degree completion program. 
 
-* 
+* At the beginning of February, Phase 3 of the campaign targeting working adults launched and overall we see strong performance, particularly in the amount of ad driven traffic to the landing page.
 
+* __DoubleClick Display:__ CTR, though averaging slightly lower than we have become accoustomed to seeing this year, is still acceptable. Furthermore, this platform is driving  lot of traffic to the landing page, with a 75% bounce rate.
+
+* __Facebook Display:__ Although the CTR has continued to trend downward, Facebook display ads have, like DBM, been driving a lot of traffic this quarter. The bounce rate is comparable to last quarters, at 89%.
+
+* __Gmail InBox:__ Open rates are above benchmark. Click to open rates, (CTOR), remain about 1.5%; while this is lower that the national industry average, they are no lower than we have seen in Marketing's Gmail campaigns.
+
+* __LinkedIn Inbox:__ Open rates continue to grow and are above benchmark.
+
+* __Facebook Video:__ There is a small budget for this platform and, while we do not have benchmarks, both View Rates and View-thru-Rates are higher than we say FY20Q1.
+
+* __Inquiries:__ Form completions are \textcolor{red}{down} as displayed above.
+
+
+```{r eval=FALSE, include=FALSE}
+## A quarterly comparison
+0 <-  NewData %>% filter(
+  #Quarter == "FY20Q3" & 
+  str_detect(AdSet, "WA")
+  ) %>%  
+  separate(Vendor, c("Vendor", "Medium")) %>% 
+  mutate(Start_Date = as.Date(
+    Start_Date, format = "%Y-%m-%d"), 
+    End_Date = as.Date(End_Date, format = "%Y-%m-%d" )) %>%
+  
+  
+  group_by(Medium, Vendor, Quarter) %>% 
+  summarise(
+    Clicks = sum(Clicks), 
+    Impressions = sum(Impressions), 
+    Bounces = sum(Bounces), 
+    Sessions = sum(Sessions), 
+    UPV = sum(UPV),
+    Views = sum(Views),
+    Completions = sum(Completions),
+    Step1 = sum(Step1),
+    ClickRatePct = round(Clicks/Impressions * 100, 2),
+    BounceRatePct = round(Bounces/Sessions * 100, 2),
+    ViewRate = round(Views/Impressions * 100, 2),
+    VTR = round(Completions/Impressions *100, 2),
+    Cost = sum(Cost),
+    Start_Date_New = min(Start_Date),
+    End_Date_New = max(End_Date)
+  ) %>% 
+  mutate(ClickThruRate = paste0(ClickRatePct, "%"),
+         BounceRate = paste0(BounceRatePct, "%"),
+         Impressions = format(as.numeric(Impressions), big.mark=","), 
+         UPV = format(as.numeric(UPV),  big.mark="," ),
+         Cost = paste0("$ ", Cost),
+         Av_TOP = round_hms(as_hms(Step1), 5), 
+         Start_Date = format(as.Date(Start_Date_New), "%m-%Y"), 
+         End_Date = format(as.Date(End_Date_New), "%m-%Y"), 
+         End_Date = ifelse(End_Date == format(Sys.Date(),"%m-%Y"), "Ongoing", End_Date)) %>% 
+  select(Quarter,
+    Medium, 
+    Vendor, 
+    Impressions, 
+    ClickThruRate, 
+    UPV, 
+    BounceRate, 
+    Av_TOP, 
+    Cost,
+    Start_Date, 
+    End_Date
+  )
+```
 

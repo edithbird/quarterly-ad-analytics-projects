@@ -1,5 +1,16 @@
+---
+title: "NewDataTransfer"
+author: "Office of Marketing and Brand Management"
+date: "4/16/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 
+```{r}
 library(dplyr)
 library(knitr)
 library(kableExtra)
@@ -7,18 +18,16 @@ library(tinytex)
 library(hms)
 library(lubridate)
 library(stringr)
- 
+```
 
-
- 
-
+```{r}
 FMOrig <- read.csv("C:/Users/christine.iyer/Downloads/MKT_output (2).csv", header = T, stringsAsFactors = F)
- 
+```
 
-
+```{r}
 FM <- FMOrig %>% filter(Master_Adname_Type == "NC" )
 FM <- FM %>%
-  filter(Code_Audience == "WA") %>% 
+  filter(Code_Product == "TR") %>% 
   mutate(
     Code_Audience = ifelse(Master_Adname == "FA20_BR_FB_VID__TL_UG_D_1", "TL", Code_Audience), 
     Code_Product = ifelse(Master_Adname == "FA20_BR_FB_VID__TL_UG_D_1", "UG", Code_Product)) %>%
@@ -32,28 +41,31 @@ FM <- FM %>%
          Master_Engagements = as.numeric(Master_Engagements)) %>% 
   arrange(Master_Date) 
 
+
+```
+ 
+```{r}
 Start <- FM %>% 
   mutate(AdSet = paste0(Code_RecruitingPeriod, "_",Code_Product, "_",Code_Audience, "_",Code_Vendor, "_",Code_Medium, "_",Code_Objective)) %>% 
   group_by(AdSet) %>% summarise(Start_Date = min(Master_Date), End_Date = max(Master_Date))
- 
+```
 
-
-
+```{r}
 FM <- FM %>%
   mutate(FY = ifelse(Master_Date > "2018-06-30 " & Master_Date <= "2019-06-30", "FY19",
                      ifelse(Master_Date >= "2019-07-01 " & Master_Date < "2020-07-01", "FY20","N/A")), 
          AdSet = paste0(Code_RecruitingPeriod, "_",Code_Product, "_",Code_Audience, "_",Code_Vendor, "_",Code_Medium, "_",Code_Objective), 
          Ad = paste0(Code_Audience, "_",Code_Vendor, "_",Code_Medium), 
          Vendor = paste0(Code_Vendor, "_",Code_Medium))
- 
+```
 
-  
+```{r}
 FMQ19 <- FM%>% 
   mutate(
     Quarter = paste0((FY),"Q",quarter(Master_Date, with_year = FALSE, fiscal_start = 7))
     
   ) %>% 
-  group_by(Quarter, AdSet, Ad, Vendor, Code_Recruiting_Period) %>% 
+  group_by(Quarter, AdSet, Ad, Vendor) %>% 
   summarise(
     Cost = sum(Master_Cost),
     Clicks = sum(Master_Clicks), 
@@ -77,10 +89,9 @@ FMQ19 <- FM%>%
     Sends = sum(Master_Sends), 
     Engagements = sum(Master_Engagements), 
     Results = sum(Master_Results))
+```
  
-
-
-colorP <- c("#F6A704", "#0E1033","#4E7B14","#A92007","#D47E0A")
+```{r}
 FMVM <- FMQ19  %>% 
   group_by(Quarter,AdSet, Ad, Vendor) %>%
   summarise(
@@ -111,14 +122,115 @@ FMVM <- FMQ19  %>%
     EngagementRate = round(Engagements/Impressions * 100, 2),
     EngRate = round((sum(LIOpens)+sum(Engagements))/sum(Sends)*100, 2), 
     Avg_RR = round(sum(Results)/sum(Impressions) * 100, 2)) %>%
-  select(Quarter, AdSet,Ad,Vendor,Impressions, Clicks, Bounces, Sessions, Swipes, ClickRatePct, SwipeUpRatePct, UPV, BounceRatePct, VTR, CTOR,OpenRate, Sends, ViewRate, ClickableCompletions, Completions, Opens, LIOpens,  Engagements,  EngRate, EngagementRate,   Step1, Cost, Avg_RR, Results) 
-NewData <- full_join(FMVM, Start) 
- 
+  select(Quarter, AdSet,Ad,Vendor,Impressions, Clicks, Bounces, Sessions, Swipes, ClickRatePct, SwipeUpRatePct, UPV, BounceRatePct, VTR, CTOR,OpenRate, Sends, Views,ViewRate, ClickableCompletions, Completions, Opens, LIOpens,  Engagements,  EngRate, EngagementRate,   Step1, Cost, Avg_RR, Results) 
+
+```
+
+```{r}
+NewData <- full_join(FMVM, Start)
+NewData <- NewData %>% 
+  mutate_at(5:30, ~replace(., is.na(.), 0)) 
+```
+
+library(zoo)
+z <- read.zoo(text = Lines, FUN = as.yearmon)
+```{r}
+# NewData <- full_join(FMVM, Start)
+# #5-30 NA/NAN = 0
+# NewData <- NewData %>% 
+#   mutate_at(5:30, ~replace(., is.na(.), 0)) 
+# %>% 
+#   select(Quarter, AdSet, Ad,Vendor,Impressions, CTR = ClickThruRate, UPV, BR = BounceRate, Av_TOP, Cost, Start_Date, End_Date) %>% filter(Impressions > 0)
+
+#NewData$Start_Date <- format(as.Date(NewData$Start_Date), )
+
+
+```
+
+```{r}
+NewData <- NewData %>% 
+  # mutate(Start_Date = format(as.Date(Start_Date), "%m-%Y"),
+  #        End_Date = format(as.Date(End_Date), "%m-%Y")
+  #        #, 
+  #        #End_Date = ifelse(End_Date == format(Sys.Date(),"%m-%Y"), "Ongoing", End_Date)
+  #        ) %>%
+  group_by(Quarter, AdSet, Ad,Vendor, Start_Date, End_Date) %>% 
+  summarise(
+    Cost = round(sum(Cost), 2),
+    Clicks = sum(Clicks),
+    Impressions = round(sum(Impressions),0),
+    Bounces = sum(Bounces),
+    Sessions = sum(Sessions),
+    UPV = sum(UPV),
+    Views = sum(Views),
+    Completions = sum(Completions),
+    Step1 = sum(Step1),
+    ClickRatePct = round(Clicks/Impressions * 100, 2),
+    BounceRatePct = round(Bounces/Sessions * 100, 2),
+    ViewRate = round(Views/Impressions * 100, 2),
+    VTR = round(Completions/Impressions *100, 2),
+    ClickableCompletions = sum(ClickableCompletions),
+    ClickableCompRate = round(Clicks/ClickableCompletions * 100, 2), 
+    Swipes = sum(Swipes), 
+    SwipeUpRatePct = round(Swipes/Impressions * 100, 2),
+    Opens = sum(Opens),
+    CTOR = round(Opens/Clicks * 100, 2), 
+    Sends = sum(Sends), 
+    LIOpens = sum(Opens),
+    OpenRate = round(LIOpens/Sends * 100, 2), 
+    Engagements = sum(Engagements),
+    Results = sum(Results), 
+    EngagementRate = round(Engagements/Impressions * 100, 2),
+    EngRate = round((sum(LIOpens)+sum(Engagements))/sum(Sends)*100, 2), 
+    Avg_RR = round(sum(Results)/sum(Impressions) * 100, 2),
+    Av_TOP = round_hms(as_hms(Step1), 5)) %>% 
+    # , 
+    # Start_Date = min(format(as.Date(Start_Date), "%m-%Y")), 
+    # End_Date = max(format(as.Date(End_Date), "%m-%Y"))
+
+# %>% 
+#mutate(
+  #ClickThruRate = paste0(ClickRatePct, "%"),
+#          BounceRate = paste0(BounceRatePct, "%"),
+#          Impressions = format(as.numeric(Impressions), big.mark=","), 
+#          UPV = format(as.numeric(UPV),  big.mark="," ),
+#          Cost = paste0("$ ", Cost),
+
+#Start_Date = format(as.Date(Start_Date), "%m-%Y"), 
+#End_Date = format(as.Date(End_Date), "%m-%Y"), 
+#          End_Date = ifelse(End_Date == format(Sys.Date(),"%m-%Y"), "Ongoing", End_Date)
+#  ) %>% 
+#)
+  # select(Quarter,
+  #        AdSet,
+  #        Ad,
+  #        Vendor,
+  #        Impressions,
+  #        ClickRatePct ,
+  #        UPV,
+  #        BounceRatePct,
+  #        Av_TOP,
+  #        Cost,
+  #        Start_Date,
+  #        End_Date) 
+# %>%
+  filter(Impressions > 0)
+names(NewData)
+```
+
+
+```{r eval=FALSE, include=FALSE}
+str(FMVM)
+
+
+
 
 ## Findings
 
 
-NewData <- NewData %>%
+  
+  #####################################
+  
   mutate(ClickThruRate = paste0(ClickRatePct, "%"),
          BounceRate = paste0(BounceRatePct, "%"),
          Impressions = format(as.numeric(Impressions), big.mark=","), 
@@ -127,7 +239,15 @@ NewData <- NewData %>%
          Av_TOP = round_hms(as_hms(Step1), 5), 
          Start_Date = format(as.Date(Start_Date), "%m-%Y"), 
          End_Date = format(as.Date(End_Date), "%m-%Y"), 
-         End_Date = ifelse(End_Date == format(Sys.Date(),"%m-%Y"), "Ongoing", End_Date)) %>%
+         End_Date = ifelse(End_Date == format(Sys.Date(),"%m-%Y"), "Ongoing", End_Date)
+         ) %>%
   select(Quarter, AdSet, Ad,Vendor,Impressions, CTR = ClickThruRate, UPV, BR = BounceRate, Av_TOP, Cost, Start_Date, End_Date) %>% filter(Impressions > 0)
 
-write.csv(NewData, "C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartWorkingAdult.csv", row.names = F)
+
+
+```
+
+```{r}
+write.csv(NewData, "C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartTransfer_V2.csv", row.names = F)
+```
+

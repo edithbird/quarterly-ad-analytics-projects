@@ -70,7 +70,7 @@ kable_styling(full_width = T)  %>%
 
 * Event Registration changed to Virtual Tour ads which began 4/1/2020. 
 
-* Roses are \textcolor{red}{red}, violets are \textcolor{blue}{blue}.
+
 
 
 __Tour Registrants Q3: FY20 vs FY19__

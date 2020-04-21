@@ -125,10 +125,6 @@ FMVM <- FMQ19  %>%
   select(Quarter, AdSet,Ad,Vendor,Impressions, Clicks, Bounces, Sessions, Swipes, ClickRatePct, SwipeUpRatePct, UPV, BounceRatePct, VTR, CTOR,OpenRate, Sends, Views,ViewRate, ClickableCompletions, Completions, Opens, LIOpens,  Engagements,  EngRate, EngagementRate,   Step1, Cost, Avg_RR, Results) 
  
  names(FMVM)
-
-```
-```{r}
-
 ```
 
 ```{r}

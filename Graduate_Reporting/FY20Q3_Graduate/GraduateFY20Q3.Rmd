@@ -46,8 +46,12 @@ NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects
 
 
 
-__All Audiences__
+### Brief Description:
 
+The FY20 advertising campaign for the University's Graduate program has been multi-phasic; phase III started part way through the 3rd quarter. The Q3 portfolio consists of Programmatic display, Facebook video, and LinkedIn Inbox. 
+
+
+### Findings
 
 
 ```{r}
@@ -75,21 +79,15 @@ kable(DCForms %>%
         summarise(`Total Inquiries this Quarter` = n()))
 ```
 
-```{r}
-#__All Audiences__
-# NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "GR_CU"))
-# NewDataFY19Q3 <- NewDataFY19Q3[,c(4:12)]
-# landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Graduate Campaign Targeting All Audiences", booktabs = T))%>%
-# kable_styling(full_width = T)  %>%
-#   row_spec(0, angle = -45)
-```
 
-```{r}
-# NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "GR_WA"))
-# NewDataFY19Q3 <- NewDataFY19Q3[,c(4:11)]
-# knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Campaign to Influencers", booktabs = T)%>%
-# kable_styling(full_width = T)  %>%
-#   row_spec(0, angle = -45)
-```
+* Ad driven traffic to the campaign landing page was very strong this quarter, 
 
-* This quarter ads are targeting multiple audiences. 
+* __Programmatic Display: __ The overall CTR at  0.1%, meets our expectations and higher than it was during the earlier phases.
+
+* __Facebook Video:__ Facebook has not published benchmarks for this platform. View and completion rates are \textcolor{red}{slightly down} from this same quarter FY19, but the website has far more unique pageviews.
+
+* __LinkedIn Inbox:__ This platform continues to outperform the benchmark open-rate.
+
+* __Instagram Display and Video:__ Although only a small portion of the budget is allocated to these platforms, results continue to be positive.
+
+* 
