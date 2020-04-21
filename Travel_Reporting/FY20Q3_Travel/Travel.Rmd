@@ -39,12 +39,16 @@ options(tinytex.verbose = TRUE)
 options(knitr.table.format = "latex")
 ```
 
+### Brief Description
+
+Marketing is currently in the middle of its Spring Travel Campaign and will be running ads through May, 2020. Traditionally, Marketing has deployed these ads out-of-state,  geo-targeting high school students where USM Admissions' Counselors host various events. In a turn of circumstances, fairs and visits were all cancelled due to the COVID-19 pandemic.  The ads, which promote the University's RSP program, and not any specific events, have been live nonetheless and driving an impressive number of unique pageviews to the campaign landing page. 
+
 
 ```{r}
 NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartTravel.csv", header = T, stringsAsFactors = F)
 ```
 
-__Out-of-State HS Students__
+## Findings
 
 
 
@@ -70,10 +74,17 @@ kable_styling(full_width = T)  %>%
 
 ```
 
+### Conclusions
 
-* Bullet One
+* The Spring Travel Campaign consists of Programmatic display, and Facebook (FB) and Snapchat (SC)video ads, in contrast to that of last fall which also ran social display ads. 
 
-* Bullet Two
+* Programmatic display and Snapchat video ads performed well. Their CTRs are above benchmarks and they drive a great deal of traffic to the campaign landing page. Performance midway through the campaign has surpassed that of last Fall's entire campaign. 
+* Although we do not have benchmarks for Facebook video ads, view-rates have remained consistent and view-through-rates have improved from the Fall Travel Campaign.
+
+* Limiting the FB to video does not appear to have a negative impact on ad driven web traffic.
+
+* This campaign runs through May.
+
 
 
 
@@ -89,7 +100,7 @@ kable_styling(full_width = T)  %>%
 ```
 
 
-* Out-of-State HS studentsare being targeted in promotion of the undergraduate degree program. 
+* Out-of-State HS students are being targeted in promotion of the undergraduate degree program. 
 
 ```{r}
 
