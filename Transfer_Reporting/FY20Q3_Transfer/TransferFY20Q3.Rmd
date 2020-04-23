@@ -46,7 +46,7 @@ options(tinytex.verbose = TRUE)
 
 ### Brief Description:
 
-Our digital campaign promoting the University's Transfer program this quarter consists mainly of Programmatic display and Facebook, YouTube, and Snapchat video. The creative was refreshed midway through the quarter.
+Our digital campaign promoting the University's Transfer program this quarter consists mainly of Programmatic display and Facebook, YouTube, and Snapchat video. The new ad creative landing pages were rolled out on February 18,2020. Transition from /here to /excel has been seemless. It is difficult to speculate as to how Covid-19 may have impacted campaign performance, nevertheless, it is important to note that the social distancing due to the global pandemic became mandatory for the entire third month of the quarter. 
 
 ```{r}
 NewData1 <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartTransfer.csv", header = T, stringsAsFactors = F)
@@ -138,77 +138,103 @@ TrForms <- Forms %>% filter(str_detect(Initial.Referral.Source, "TR")) %>%
     
   ) %>% select(FY, Quarter,Date, everything())
 
+TrForms <-  TrForms %>% mutate(LandingPage = ifelse(Date <= "2019-08-01", "/other",
+                                                    ifelse(Date > "2019-08-01" & Date < "2020-02-18", "/here", "/excel")))
+
 TrForms <- TrForms %>% filter(str_detect(Initial.Referral.Source, "TR"), str_detect(Quarter, "3"))
 kable(TrForms %>%  
-        group_by(FY, Quarter) %>% 
+        group_by(FY, Quarter, LandingPage) %>% 
         summarise(`Total Inquiries this Quarter` = n()))
 ```
 
+### Conclusions:
+
+* A strong quarter overall.
+
+* The ad creative and landing page transition went smoothly and the click-through-rates were essentially unchanged.
+
+* __Programmatic Display:__ Performance continues to be strong. The CTR is steady and meets our expectations. The ads are driving traffic with encouraging numbers for the second consecutive quarter.
+
+* __Snapchat Video:__ The CTR is above the national benchmark and as we have seen recently, it drives a great deal of traffic to the campaign landing page with a high bounce rate.
+
+* __YouTube:__ We continue to see view rates above the benchmark. 
+
+* __Instagram Stories:__ We do not have benchmarks for this platform, however since last quarter, which was first time we started differentiating them from IG video, we have seen consistent view rates at 88%  and view-through-rates at 1.0%. 
+
+* __Inquiries:__ We are \textcolor{red}{down} from 75 inquiries from last year same quarter to 47 this year. More inquiry forms were completed during the /excel campaign.
+
+* On the next page, I have provided a table to show the breakdown between the Fall and Spring creative. 
+
+
 
 
 ```{r}
-# NewDataFY19Q3 <- NewData1 %>% 
-#   filter(
-#     Quarter == "FY20Q3" & str_detect(AdSet, "TR")) %>% 
-#   mutate(
-#     Vendor = str_sub(AdSet, 12, 14),
-#     Vendor = ifelse(str_detect(Vendor, "_"), str_sub(Vendor, 1,2), Vendor),
-#     Medium = str_sub(AdSet, 15,18), 
-#     Medium = ifelse(str_detect(Medium, "DIS"), "Display", ifelse(str_detect(Medium, "VI"), "Video", "Story"))) %>% select(Medium,Vendor,  Impressions, CTR, UPV, BR, Av_TOP, Cost, Start_Date, End_Date) %>% arrange(Medium, Vendor)
-# NewDataFY19Q3 <- NewDataFY19Q3[,c(1:10)]
-# landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Transfer Campaign", booktabs = T))%>%
-# kable_styling(full_width = T)  %>%
-#   row_spec(0, angle = -45) %>%
-#   pack_rows("Display", 1, 3) %>%
-#   pack_rows("Story", 4,5) %>%
-#   pack_rows("Video", 6, 12)
+
+NewDataFY19Q3 <- NewData1 %>%
+  filter(
+    Quarter == "FY20Q3" & str_detect(AdSet, "TR")) %>%
+  mutate(
+    Vendor = str_sub(AdSet, 12, 14),
+    Vendor = ifelse(str_detect(Vendor, "_"), str_sub(Vendor, 1,2), Vendor),
+    Medium = str_sub(AdSet, 15,18),
+    Medium = ifelse(str_detect(Medium, "DIS"), "Display", ifelse(str_detect(Medium, "VI"), "Video", "Story"))) %>% select(Medium,Vendor,  Impressions, CTR, UPV, BR, Av_TOP, Cost, Start_Date, End_Date) %>% arrange(Medium, Vendor)
+NewDataFY19Q3 <- NewDataFY19Q3[c(1:2,4:5,7:12),c(1:9)]
+# NewDataFY19Q3 <- NewDataFY19Q3[,]
+landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Transfer Campaign", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Programmatic Display", 1, 2) %>%
+  pack_rows("Instagram Story", 3,4) %>%
+  pack_rows("Instagram Video", 5, 6)%>%
+  pack_rows("Snapchat Video", 7, 8)%>%
+  pack_rows("YouTube Video", 9, 10)
 ```
 
 ```{r}
-# NewDataFY20Q <-  NewData2 %>% filter(str_detect(AdSet, "TR")) %>%  
-#   separate(Vendor, c("Vendor", "Medium")) %>% 
-#   mutate(Start_Date = as.Date(
-#     Start_Date, format = "%Y-%m-%d"), 
-#     End_Date = as.Date(End_Date, format = "%Y-%m-%d" )) %>% 
-#   group_by(Quarter,Medium, Vendor) %>% 
-#   summarise(
-#     Clicks = sum(Clicks), 
-#     Impressions = sum(Impressions), 
-#     Bounces = sum(Bounces), 
-#     Sessions = sum(Sessions), 
-#     UPV = sum(UPV),
-#     Views = sum(Views),
-#     Completions = sum(Completions),
-#     Step1 = sum(Step1),
-#     ClickRatePct = round(Clicks/Impressions * 100, 2),
-#     BounceRatePct = round(Bounces/Sessions * 100, 2),
-#     ViewRate = round(Views/Impressions * 100, 2),
-#     VTR = round(Completions/Impressions *100, 2),
-#     Cost = sum(Cost),
-#     Start_Date_New = min(Start_Date),
-#     End_Date_New = max(End_Date)
-#   ) %>% 
-#   mutate(ClickThruRate = paste0(ClickRatePct, "%"),
-#          BounceRate = paste0(BounceRatePct, "%"),
-#          Impressions = format(as.numeric(Impressions), big.mark=","), 
-  #        UPV = format(as.numeric(UPV),  big.mark="," ),
-  #        Cost = paste0("$ ", Cost),
-  #        Av_TOP = round_hms(as_hms(Step1), 5), 
-  #        Start_Date = format(as.Date(Start_Date_New), "%m-%Y"), 
-  #        End_Date = format(as.Date(End_Date_New), "%m-%Y"), 
-  #        End_Date = ifelse(End_Date == format(Sys.Date(),"%m-%Y"), "Ongoing", End_Date)) %>% 
-  # select(
-  #   Medium, 
-  #   Vendor, 
-  #   Impressions, 
-  #   ClickThruRate, 
-  #   UPV, 
-  #   BounceRate, 
-  #   Av_TOP, 
-  #   Cost,
-  #   Start_Date, 
-  #   End_Date
-  # )
+NewDataFY20Q <-  NewData2 %>% filter(str_detect(AdSet, "TR")) %>%
+  separate(Vendor, c("Vendor", "Medium")) %>%
+  mutate(Start_Date = as.Date(
+    Start_Date, format = "%Y-%m-%d"),
+    End_Date = as.Date(End_Date, format = "%Y-%m-%d" )) %>%
+  group_by(Quarter,Medium, Vendor) %>%
+  summarise(
+    Clicks = sum(Clicks),
+    Impressions = sum(Impressions),
+    Bounces = sum(Bounces),
+    Sessions = sum(Sessions),
+    UPV = sum(UPV),
+    Views = sum(Views),
+    Completions = sum(Completions),
+    Step1 = sum(Step1),
+    ClickRatePct = round(Clicks/Impressions * 100, 2),
+    BounceRatePct = round(Bounces/Sessions * 100, 2),
+    ViewRate = round(Views/Impressions * 100, 2),
+    VTR = round(Completions/Impressions *100, 2),
+    Cost = sum(Cost),
+    Start_Date_New = min(Start_Date),
+    End_Date_New = max(End_Date)
+  ) %>%
+  mutate(ClickThruRate = paste0(ClickRatePct, "%"),
+         BounceRate = paste0(BounceRatePct, "%"),
+         Impressions = format(as.numeric(Impressions), big.mark=","),
+       UPV = format(as.numeric(UPV),  big.mark="," ),
+       Cost = paste0("$ ", Cost),
+       Av_TOP = round_hms(as_hms(Step1), 5),
+       Start_Date = format(as.Date(Start_Date_New), "%m-%Y"),
+       End_Date = format(as.Date(End_Date_New), "%m-%Y"),
+       End_Date = ifelse(End_Date == format(Sys.Date(),"%m-%Y"), "Ongoing", End_Date)) %>%
+select(
+  Medium,
+  Vendor,
+  Impressions,
+  ClickThruRate,
+  UPV,
+  BounceRate,
+  Av_TOP,
+  Cost,
+  Start_Date,
+  End_Date
+)
 
 ```
 
@@ -230,20 +256,5 @@ kable(TrForms %>%
 #   
   
 ```
-
-### Conclusions:
-
-* A strong quarter overall.
-
-* __Programmatic Display:__ Performance continues to be strong. The CTR is steady and meets our expectations. The ads are driving traffic with encouraging numbers for the second consecutive quarter.
-
-* __Snapchat Video:__ The CTR is above the national benchmark and as we have seen recently, it drives a great deal of traffic to the campaign landing page with a high bounce rate.
-
-* __YouTube:__ We continue to see view rates above the benchmark. 
-
-* __Instagram Stories:__ We do not have benchmarks for this platform, however since last quarter, which was first time we started differentiating them from IG video, we have seen consistent view rates at 88%  and view-through-rates at 1.0%. 
-
-* __Inquiries:__ We are \textcolor{red}{down}  from 75 inquiries from last year same quarter to 47 this year.
-
 
 

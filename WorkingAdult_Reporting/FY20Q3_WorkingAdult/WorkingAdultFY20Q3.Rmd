@@ -101,7 +101,11 @@ NewDataFY20 <-  NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "WA")
 #   group_by(Medium, Vendor)
 ```
 
-__Degree Completion__
+### Brief Description:
+
+The FY20 advertising campaign targeting working adults (WA) has been multiphasic; part III started midway through the 3rd quarter. The Q3 portfolio consists mainly of Programmatic and Facebook display and LinkedIn and Gmail Inbox; a small amount goes to Facebook video.The new ad creative landing pages were rolled out on February 18,2020. Transition from /here to /excel has been seemless.
+
+### Findings
 
 ```{r}
 NewDataFY19Q3 <- NewDataFY20 %>%  select(Medium:End_Date) %>% arrange(Medium, Vendor)
@@ -170,9 +174,9 @@ NewDataFY19 <-  NewData %>% filter(Quarter == "FY19Q3" & str_detect(AdSet, "WA")
 #   group_by(Medium, Vendor)
 ```
 
-__Degree Completion__
 
-```{r}
+
+```{r eval=FALSE, include=FALSE}
 NewDataFY19Q3 <- NewDataFY19 %>%  select(Medium:End_Date) %>% arrange(Medium, Vendor)
 #NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
 landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY19 Q3 Campaign Targeting Working Adults", booktabs = T))%>%
@@ -186,17 +190,21 @@ kable_styling(full_width = T)  %>%
 ```{r}
 Forms <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/ThankYouFormCompletions.csv", header = T, stringsAsFactors = F)
 
+
+
 DCForms <- Forms %>% filter(str_detect(Initial.Referral.Source,"DC")) %>% 
-  mutate(
-    Date = as.Date(Initial.Source.Date, format = "%m/%d/%Y"),
-    FY = ifelse(Date < "2019-07-01", "FY19","FY20"), 
-    Quarter = paste0((FY),"Q",quarter(Date, with_year = FALSE, fiscal_start = 7))
+  mutate(Date = as.Date(Initial.Source.Date, format = "%m/%d/%Y"),
+         LandingPage = 
+           ifelse(Date <= "2019-08-01","/other",
+                  ifelse(Date > "2019-08-01" & Date < "2020-02-18", "/here", "/excel")),
+         FY = ifelse(Date < "2019-07-01", "FY19","FY20"), 
+         Quarter = paste0((FY),"Q",quarter(Date, with_year = FALSE, fiscal_start = 7))
     
   ) %>% select(FY, Quarter,Date, everything())
 
 DCForms <- DCForms %>% filter(str_detect(Initial.Referral.Source, "DC"), str_detect(Quarter, "3"))
 kable(DCForms %>%  
-        group_by(FY, Quarter) %>% 
+        group_by(FY, Quarter, LandingPage) %>% 
         summarise(`Total Inquiries this Quarter` = n()))
 ```
 
@@ -204,69 +212,43 @@ kable(DCForms %>%
 
 * At the beginning of February, Phase 3 of the campaign targeting working adults launched and overall we see strong performance, particularly in the amount of ad driven traffic to the landing page.
 
-* __DoubleClick Display:__ CTR, though averaging slightly lower than we have become accoustomed to seeing this year, is still acceptable. Furthermore, this platform is driving  lot of traffic to the landing page, with a 75% bounce rate.
+* __DoubleClick Display:__ CTR, though averaging slightly lower than we have become accustomed to seeing this year, is still acceptable. Furthermore, this platform is driving a lot of traffic to the landing page, with a 75% bounce rate. The Spring creative has a slightly lower CTR than that of the Fall, however it has brought in more traffic with a lower bounce rate. 
 
-* __Facebook Display:__ Although the CTR has continued to trend downward, Facebook display ads have, like DBM, been driving a lot of traffic this quarter. The bounce rate is comparable to last quarters, at 89%.
+* __Facebook Display:__ Although the CTR has continued to \textcolor{red}{trend downward}, Facebook display ads have, like DBM, been driving a lot of traffic this quarter. The bounce rate is comparable to last quarters, at 89%.
 
-* __Gmail InBox:__ Open rates are above benchmark. Click to open rates, (CTOR), remain about 1.5%; while this is lower that the national industry average, they are no lower than we have seen in Marketing's Gmail campaigns.
+* __Gmail InBox:__ Open rates are above benchmark. Click to open rates, (CTOR), remain about 1.5%; while this is lower that the national industry average, they are no lower than we have seen in our other Gmail campaigns.
 
 * __LinkedIn Inbox:__ Open rates continue to grow and are above benchmark.
 
 * __Facebook Video:__ There is a small budget for this platform and, while we do not have benchmarks, both View Rates and View-thru-Rates are higher than we say FY20Q1.
 
-* __Inquiries:__ Form completions are \textcolor{red}{down} as displayed above.
+* __Inquiries:__ Form completions are \textcolor{red}{down} as displayed above. More inquiry forms were completed during the /excel campaign.
+
+* On the next page, I have provided a table to show the breakdown between the Fall and Spring creative.
 
 
-```{r eval=FALSE, include=FALSE}
-## A quarterly comparison
-0 <-  NewData %>% filter(
-  #Quarter == "FY20Q3" & 
-  str_detect(AdSet, "WA")
-  ) %>%  
-  separate(Vendor, c("Vendor", "Medium")) %>% 
-  mutate(Start_Date = as.Date(
-    Start_Date, format = "%Y-%m-%d"), 
-    End_Date = as.Date(End_Date, format = "%Y-%m-%d" )) %>%
-  
-  
-  group_by(Medium, Vendor, Quarter) %>% 
-  summarise(
-    Clicks = sum(Clicks), 
-    Impressions = sum(Impressions), 
-    Bounces = sum(Bounces), 
-    Sessions = sum(Sessions), 
-    UPV = sum(UPV),
-    Views = sum(Views),
-    Completions = sum(Completions),
-    Step1 = sum(Step1),
-    ClickRatePct = round(Clicks/Impressions * 100, 2),
-    BounceRatePct = round(Bounces/Sessions * 100, 2),
-    ViewRate = round(Views/Impressions * 100, 2),
-    VTR = round(Completions/Impressions *100, 2),
-    Cost = sum(Cost),
-    Start_Date_New = min(Start_Date),
-    End_Date_New = max(End_Date)
-  ) %>% 
-  mutate(ClickThruRate = paste0(ClickRatePct, "%"),
-         BounceRate = paste0(BounceRatePct, "%"),
-         Impressions = format(as.numeric(Impressions), big.mark=","), 
-         UPV = format(as.numeric(UPV),  big.mark="," ),
-         Cost = paste0("$ ", Cost),
-         Av_TOP = round_hms(as_hms(Step1), 5), 
-         Start_Date = format(as.Date(Start_Date_New), "%m-%Y"), 
-         End_Date = format(as.Date(End_Date_New), "%m-%Y"), 
-         End_Date = ifelse(End_Date == format(Sys.Date(),"%m-%Y"), "Ongoing", End_Date)) %>% 
-  select(Quarter,
-    Medium, 
-    Vendor, 
-    Impressions, 
-    ClickThruRate, 
-    UPV, 
-    BounceRate, 
-    Av_TOP, 
-    Cost,
-    Start_Date, 
-    End_Date
-  )
+```{r}
+NewData1 <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartWorkingAdult.csv", header = T, stringsAsFactors = F)
 ```
 
+```{r}
+NewDataFY19Q3 <- NewData1 %>%
+  filter(
+    Quarter == "FY20Q3" & str_detect(AdSet, "WA")) %>%
+  mutate(
+    Vendor = str_sub(AdSet, 12, 14),
+    Vendor = ifelse(str_detect(Vendor, "_"), str_sub(Vendor, 1,2), Vendor),
+    Medium = str_sub(AdSet, 15,18),
+    Medium = ifelse(str_detect(Medium, "DIS"), "Display", ifelse(str_detect(Medium, "VI"), "Video", "Story"))) %>% select(Medium,Vendor,  Impressions, CTR, UPV, BR, Av_TOP, Cost, Start_Date, End_Date) %>% arrange(Medium, Vendor)
+```
+
+
+```{r}
+
+NewDataFY19Q3 <- NewDataFY19Q3[c(1,2,5,6),c(1:9)]
+landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Campaign Trargeting Working Adults", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Programmatic Display", 1, 2) %>%
+  pack_rows("Gmail Inbox", 3,4) 
+```

@@ -38,24 +38,86 @@ library(tidyr)
 options(tinytex.verbose = TRUE)
 ```
 
+### Brief Description:
+
+Our FY20 Q3 digital campaign promoting the University's Undergraduate program to in-state High School students and their influencers consists of a large variety of media platforms. New ad creative and landing pages were rolled out on February 18,2020. Transition from /here to /excel has been seemless and we see good results. It is difficult to speculate as to how Covid-19 may have impacted campaign performance, nevertheless, it is important to note that the social distancing due to the global pandemic became mandatory for the entire third month of the quarter. 
+
 
 ```{r}
-NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/Flowchart.csv", header = T, stringsAsFactors = F)
+NewData1 <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/Flowchart.csv", header = T, stringsAsFactors = F)
 ```
 
 ```{r}
-NewDataFY19Q3 <- NewData %>% 
-  filter(Quarter == "FY20Q3" & str_detect(AdSet, "HS")) %>%
+NewData2 <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartHS_V2.csv",header = T, stringsAsFactors = F)
+```
+
+
+```{r}
+NewDataFY20 <-  NewData2 %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "UG")) %>%  
   separate(Vendor, c("Vendor", "Medium")) %>% 
-  select(Medium, Vendor, Quarter, Impressions:End_Date) %>% 
-  arrange(Medium, Vendor)
+  mutate(Start_Date = as.Date(
+    Start_Date, format = "%Y-%m-%d"), 
+    End_Date = as.Date(End_Date, format = "%Y-%m-%d" )) %>% 
+  
+  group_by(Medium, Vendor) %>% 
+  summarise(
+    Clicks = sum(Clicks), 
+    Impressions = sum(Impressions), 
+    Bounces = sum(Bounces), 
+    Sessions = sum(Sessions), 
+    UPV = sum(UPV),
+    Views = sum(Views),
+    Completions = sum(Completions),
+    Step1 = sum(Step1),
+    ClickRatePct = round(Clicks/Impressions * 100, 2),
+    BounceRatePct = round(Bounces/Sessions * 100, 2),
+    ViewRate = round(Views/Impressions * 100, 2),
+    VTR = round(Completions/Impressions *100, 2),
+    Cost = sum(Cost),
+    Start_Date_New = min(Start_Date),
+    End_Date_New = max(End_Date)
+  ) %>% 
+  mutate(ClickThruRate = paste0(ClickRatePct, "%"),
+         BounceRate = paste0(BounceRatePct, "%"),
+         Impressions = format(as.numeric(Impressions), big.mark=","), 
+         UPV = format(as.numeric(UPV),  big.mark="," ),
+         Cost = paste0("$ ", Cost),
+         Av_TOP = round_hms(as_hms(Step1), 5), 
+         Start_Date = format(as.Date(Start_Date_New), "%m-%Y"), 
+         End_Date = format(as.Date(End_Date_New), "%m-%Y"), 
+         End_Date = ifelse(End_Date == format(Sys.Date(),"%m-%Y"), "Ongoing", End_Date)) %>% 
+  select(
+    Medium, 
+    Vendor, 
+    Impressions, 
+    ClickThruRate, 
+    UPV, 
+    BounceRate, 
+    Av_TOP, 
+    Cost,
+    Start_Date, 
+    End_Date
+  )
+  
+```
+
+
+```{r}
+# NewData2 <- NewData %>% 
+#   group_by(Medium, Vendor)
+```
+
+### Findings
+
+```{r}
+NewDataFY19Q3 <- NewDataFY20 %>%  select(Medium:End_Date) %>% arrange(Medium, Vendor)
 #NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
-landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Undergraduate Campaign Targeting In-State High School Students and their Influencers", booktabs = T))%>%
+landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Campaign Review: Transfer Degree", booktabs = T))%>%
 kable_styling(full_width = T)  %>%
   row_spec(0, angle = -45) %>%
   pack_rows("Display", 1, 4) %>%
-  pack_rows("Video", 7, 13) %>%
-  pack_rows("Instagram Stories", 5, 6) 
+  pack_rows("Story", 5, 5) %>%
+  pack_rows("Video", 6, 10)
   
 ```
 
@@ -89,10 +151,8 @@ kable_styling(full_width = T)  %>%
 ```
 
 
-  
-
 ```{r}
-NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "FA21_UG_IN_PIN_DISP_BR")) %>%  separate(Vendor, c("Vendor", "Medium")) %>% select(Medium, Vendor, Quarter, Impressions:End_Date) %>% arrange(Medium, Vendor)
+NewDataFY19Q3 <- NewData1 %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "FA21_UG_IN_PIN_DISP_BR")) %>%  separate(Vendor, c("Vendor", "Medium")) %>% select(Medium, Vendor, Quarter, Impressions:End_Date) %>% arrange(Medium, Vendor)
 #NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
 landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Graduate Campaign Targeting All Audiences", booktabs = T))%>%
 kable_styling(full_width = T)  %>%
@@ -102,7 +162,7 @@ kable_styling(full_width = T)  %>%
 
 Inquiries
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 Forms <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/ThankYouFormCompletions.csv", header = T, stringsAsFactors = F)
 
 DCForms <- Forms %>% filter(str_detect(Initial.Referral.Source,"HS")) %>% 
@@ -119,11 +179,32 @@ kable(DCForms %>%
         summarise(`Total Inquiries this Quarter` = n()))
 ```
 
+
+```{r}
+Forms <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/ThankYouFormCompletions.csv", header = T, stringsAsFactors = F)
+
+
+
+DCForms <- Forms %>% filter(str_detect(Initial.Referral.Source,"HS")) %>% 
+  mutate(Date = as.Date(Initial.Source.Date, format = "%m/%d/%Y"),
+         LandingPage = 
+           ifelse(Date <= "2019-08-01","/other",
+                  ifelse(Date > "2019-08-01" & Date < "2020-02-18", "/here", "/excel")),
+         FY = ifelse(Date < "2019-07-01", "FY19","FY20"), 
+         Quarter = paste0((FY),"Q",quarter(Date, with_year = FALSE, fiscal_start = 7))
+    
+  ) %>% select(FY, Quarter,Date, everything())
+
+DCForms <- DCForms %>% filter(str_detect(Initial.Referral.Source, "HS"), str_detect(Quarter, "3"))
+kable(DCForms %>%  
+        group_by(FY, Quarter, LandingPage) %>% 
+        summarise(`Total Inquiries this Quarter` = n()))
+```
+
 Conclusions:
 
-* __Programmatic Display__: Doing well. FY20 is the first year where digital ads are targeted to different audiences. Each quarter has shown growth in click-thru-rates (CTR). Unique Pageviews (UPV) have almost doubled since last quarter while the cost has been stable.
+* __Programmatic Display__: Doing well. FY20 is the first year where digital ads are targeted to different audiences. Each quarter has shown growth in click-thru-rates (CTR). Unique Pageviews (UPV) have almost doubled since last quarter while the cost has been stable. Since the transition to the /excel campaign, web traffic has been strong and the bounce rate has dropped some. 
 
-*Roses are \textcolor{red}{red}, violets are \textcolor{blue}{blue}.
 
 * __Facebook Display__: The quarterly CTR is \textcolor{red}{below} that of the same quarter last year and is \textcolor{red}{slightly down this quarter to from Q2}. UPV are down from last quarter but up from the same quarter last year. The CTR has consistently been below 0.45%, the USM established benchmark. 
 
@@ -139,6 +220,24 @@ Conclusions:
 
 * __Instagram Video__: We do not have benchmarks for this platform, but can see that view rates have been stable over the last 7 quarters and are higher in FY20 than they were in FY19. Moving forward, it would be good if Rinck could update us on benchmarks and expectations for both IG and FB.
 
+* I have attached a more detailed performance table below which highlights the differences between the 2 different creatives. 
+
+
+```{r}
+NewDataFY19Q3 <- NewData1 %>% 
+  filter(Quarter == "FY20Q3" & str_detect(AdSet, "HS")) %>%
+  separate(Vendor, c("Vendor", "Medium")) %>% 
+  select(Medium, Vendor, Quarter, Impressions:End_Date) %>% 
+  arrange(Medium, Vendor)
+#NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
+landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Undergraduate Campaign Targeting In-State High School Students and their Influencers", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Display", 1, 4) %>%
+  pack_rows("Video", 7, 13) %>%
+  pack_rows("Instagram Stories", 5, 6) 
+  
+```
 
 
 

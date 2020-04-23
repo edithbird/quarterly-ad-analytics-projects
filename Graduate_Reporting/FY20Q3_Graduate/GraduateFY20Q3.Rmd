@@ -48,7 +48,7 @@ NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects
 
 ### Brief Description:
 
-The FY20 advertising campaign for the University's Graduate program has been multi-phasic; phase III started part way through the 3rd quarter. The Q3 portfolio consists of Programmatic display, Facebook video, and LinkedIn Inbox. 
+The FY20 advertising campaign for the University's Graduate program has been multiphasic; part III (using the new creative and landing page) started midway through the 3rd quarter. The Q3 portfolio consists of Programmatic display, Facebook video, and LinkedIn Inbox. Transition from /here to /excel has been seemless. It is difficult to speculate as to how Covid-19 may have impacted campaign performance, nevertheless, it is important to note that the social distancing due to the global pandemic became mandatory for the entire third month of the quarter. 
 
 
 ### Findings
@@ -68,28 +68,33 @@ kable_styling(full_width = T)  %>%
 ```{r}
 Forms <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/ThankYouFormCompletions.csv", header = T, stringsAsFactors = F)
 
+
+
 DCForms <- Forms %>% filter(str_detect(Initial.Referral.Source,"GR")) %>% 
-  mutate(
-    Date = as.Date(Initial.Source.Date, format = "%m/%d/%Y"),
-    FY = ifelse(Date < "2019-07-01", "FY19","FY20"), 
-    Quarter = paste0((FY),"Q",quarter(Date, with_year = FALSE, fiscal_start = 7))
+  mutate(Date = as.Date(Initial.Source.Date, format = "%m/%d/%Y"),
+         LandingPage = 
+           ifelse(Date <= "2019-08-01","/other",
+                  ifelse(Date > "2019-08-01" & Date < "2020-02-18", "/here", "/excel")),
+         FY = ifelse(Date < "2019-07-01", "FY19","FY20"), 
+         Quarter = paste0((FY),"Q",quarter(Date, with_year = FALSE, fiscal_start = 7))
     
   ) %>% select(FY, Quarter,Date, everything())
 
 DCForms <- DCForms %>% filter(str_detect(Initial.Referral.Source, "GR"), str_detect(Quarter, "3"))
 kable(DCForms %>%  
-        group_by(FY, Quarter) %>% 
+        group_by(FY, Quarter, LandingPage) %>% 
         summarise(`Total Inquiries this Quarter` = n()))
 ```
 
+### Conclusions:
 
-* Ad driven traffic to the campaign landing page was very strong this quarter, 
+* Ad driven traffic to the campaign landing page was very strong this quarter 
 
-* __Programmatic Display: __ The overall CTR at  0.1%, meets our expectations and higher than it was during the earlier phases.
+* __Programmatic Display: __ The overall CTR at  0.1%, meets our expectations and is higher than it was during the previous two phases. The Spring creative has a slightly lower CTR than that of the Fall, and we have seen fewer inquiries since the /excel campaign launch, but I will keep checking into this.
 
 * __Facebook Video:__ Facebook has not published benchmarks for this platform. View and completion rates are \textcolor{red}{slightly down} from this same quarter FY19, but the website has far more unique pageviews.
 
-* __LinkedIn Inbox:__ This platform continues to outperform the benchmark open-rate.
+* __LinkedIn Inbox:__ This platform continues to out-perform the benchmark open-rate.
 
 * __Instagram Display and Video:__ Although only a small portion of the budget is allocated to these platforms, results continue to be positive.
 
