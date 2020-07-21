@@ -1,0 +1,143 @@
+---
+title: "FA20 Graduate Campaign Quarterly Ad Analytics Project: FY20 Q4"
+author: "Office of Marketing and Brand Management"
+date: "7/15/2020"
+output:
+  pdf_document:
+fontsize: 11pt
+mainfont: Calibri
+sansfont: Calibri
+monofont: Calibri
+geometry: margin=1in
+---
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r include=FALSE}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(tinytex)
+library(hms)
+library(lubridate)
+library(stringr)
+library(tidyr)
+```
+
+
+```{r, include=FALSE}
+options(tinytex.verbose = TRUE)
+```
+
+### Brief Description:
+
+Our FY20 Q4 digital campaign promoting the University's Transfer program
+
+
+```{r}
+NewData1 <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/Flowchart.csv", header = T, stringsAsFactors = F)
+```
+
+
+
+```{r}
+
+GR_NewDataFY20 <-  NewData1 %>% filter(Quarter == "FY20Q4" & str_detect(AdSet, "GR")) %>%  
+  separate(Vendor, c("Vendor", "Medium")) %>% 
+  arrange(Medium, Vendor)
+GR_NewDataFY20 <- GR_NewDataFY20 %>%  select(Vendor:End_Date) %>% arrange(Medium, Vendor)
+
+
+#NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
+landscape(knitr::kable(GR_NewDataFY20, "latex", caption = "FY20 Q4 Campaign Review: Graduate Degree Program Degree", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Display", 1, 2) %>%
+  pack_rows("Story", 3, 4) 
+  
+```
+
+
+Inquiries
+
+```{r eval=FALSE, include=FALSE}
+Forms <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/ThankYouFormCompletions.csv", header = T, stringsAsFactors = F)
+unique(Forms$Initial.Referral.Source)
+DCForms <- Forms %>% filter(str_detect(Initial.Referral.Source,"GR")) %>% 
+  mutate(
+    Date = as.Date(Initial.Source.Date, format = "%m/%d/%Y"),
+    FY = ifelse(Date < "2019-07-01", "FY19","FY20"), 
+    Quarter = paste0((FY),"Q",quarter(Date, with_year = FALSE, fiscal_start = 7))
+    
+  ) %>% select(FY, Quarter,Date, everything())
+
+DCForms <- DCForms %>% filter(str_detect(Initial.Referral.Source, "GR"), str_detect(Quarter, "4"))
+kable(DCForms %>%  
+        group_by(FY, Quarter) %>% 
+        summarise(`Total Inquiries this Quarter` = n()))
+```
+
+Conclusions:
+
+* __Programmatic Display__: 
+
+* __Pinterest Display:__  
+		
+* __Instagram Stories:__ 
+			
+			
+* __Facebook Video:__ 
+
+* __Instagram Video:__ 
+
+*	__Pinterest Video:__ 
+
+* __Snapchat Video:__ 
+
+* __Youtube Video:__ 
+
+
+*	__Pinterest for Influencers:__ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

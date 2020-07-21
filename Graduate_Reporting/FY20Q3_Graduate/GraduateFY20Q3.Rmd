@@ -48,7 +48,7 @@ NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects
 
 ### Brief Description:
 
-The FY20 advertising campaign for the University's Graduate program has been multiphasic; part III (using the new creative and landing page) started midway through the 3rd quarter. The Q3 portfolio consists of Programmatic display, Facebook video, and LinkedIn Inbox. Transition from /here to /excel has been seemless. It is difficult to speculate as to how Covid-19 may have impacted campaign performance, nevertheless, it is important to note that the social distancing due to the global pandemic became mandatory for the entire third month of the quarter. 
+The FY20 advertising campaign for the University's Graduate program has been multiphasic; part III (using the new creative and landing page) started midway through the 3rd quarter. The Q3 portfolio consists of Programmatic display, Facebook video, and LinkedIn Inbox. Transition from /here to /excel has been seamless. It is difficult to speculate as to how Covid-19 may have impacted campaign performance, nevertheless, it is important to note that the social distancing due to the global pandemic became mandatory for the entire third month of the quarter. 
 
 
 ### Findings
@@ -61,8 +61,27 @@ landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Graduate Campa
 kable_styling(full_width = T)  %>%
   row_spec(0, angle = -45) %>%
   pack_rows("Display", 1, 3) %>%
-  pack_rows("Text", 4, 4)%>%
+  pack_rows("Text", 4, 4) %>% 
   pack_rows("Video", 5, 6)
+```
+
+
+```{r}
+NewDataFY19Q4 <- NewData %>% 
+  filter(Quarter == "FY20Q4" & str_detect(AdSet, "GR_ALL")) %>%  
+  separate(Vendor, c("Vendor", "Medium")) %>% 
+  select(Medium, Vendor, Quarter, Impressions:End_Date) %>% 
+  arrange(Medium, Vendor)
+#NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
+landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Graduate Campaign Targeting All Audiences", booktabs = T)) %>% 
+kable_styling(full_width = T) %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Display", 1, 2) %>%
+  pack_rows("Text", 3, 4) 
+
+
+Campaign <- rbind.data.frame(NewDataFY19Q3, NewDataFY19Q4)
+Campaign %>% filter(str_detect(Start_Date, "2020")) %>% arrange(Vendor)
 ```
 
 ```{r}

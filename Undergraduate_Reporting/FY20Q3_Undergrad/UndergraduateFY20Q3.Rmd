@@ -40,7 +40,7 @@ options(tinytex.verbose = TRUE)
 
 ### Brief Description:
 
-Our FY20 Q3 digital campaign promoting the University's Undergraduate program to in-state High School students and their influencers consists of a large variety of media platforms. New ad creative and landing pages were rolled out on February 18,2020. Transition from /here to /excel has been seemless and we see good results. It is difficult to speculate as to how Covid-19 may have impacted campaign performance, nevertheless, it is important to note that the social distancing due to the global pandemic became mandatory for the entire third month of the quarter. 
+Our FY20 Q3 digital campaign promoting the University's Undergraduate program to in-state High School students and their influencers consists of a large variety of media platforms. New ad creative and landing pages were rolled out on February 18,2020. Transition from /here to /excel has been seamless and we see good results. It is difficult to speculate as to how Covid-19 may have impacted campaign performance, nevertheless, it is important to note that the social distancing due to the global pandemic became mandatory for the entire third month of the quarter. 
 
 
 ```{r}
@@ -188,7 +188,7 @@ Forms <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/T
 DCForms <- Forms %>% filter(str_detect(Initial.Referral.Source,"HS")) %>% 
   mutate(Date = as.Date(Initial.Source.Date, format = "%m/%d/%Y"),
          LandingPage = 
-           ifelse(Date <= "2019-08-01","/other",
+           ifelse(Date <= "2019-08-01","/everyone",
                   ifelse(Date > "2019-08-01" & Date < "2020-02-18", "/here", "/excel")),
          FY = ifelse(Date < "2019-07-01", "FY19","FY20"), 
          Quarter = paste0((FY),"Q",quarter(Date, with_year = FALSE, fiscal_start = 7))
@@ -221,6 +221,8 @@ Conclusions:
 * __Instagram Video__: We do not have benchmarks for this platform, but can see that view rates have been stable over the last 7 quarters and are higher in FY20 than they were in FY19. Moving forward, it would be good if Rinck could update us on benchmarks and expectations for both IG and FB.
 
 * I have attached a more detailed performance table below which highlights the differences between the 2 different creatives. 
+
+* Lastly, please note the \textcolor{red}{100 percent bounce rate and zero minutes average time-on-page} for Pinterest ads to the HS student audience. This seems like an anomoly. I'll address this with the agency. 
 
 
 ```{r}

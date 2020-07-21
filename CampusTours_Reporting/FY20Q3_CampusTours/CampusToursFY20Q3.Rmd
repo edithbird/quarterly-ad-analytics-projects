@@ -56,7 +56,7 @@ kable_styling(full_width = T)  %>%
   pack_rows("Display", 1, 3) %>%
   pack_rows("Video", 4, 5)
 ```
-* The advertising campaign for campus tours has performed very well this quarter, despite the COVID-19 mandate to quarentine, bringing March attendance to nearly zero. 
+* The advertising campaign for campus tours has performed very well this quarter. Despite the COVID-19 mandate to quarentine, bringing March attendance to nearly zero, campus tour's confirmed registrants in January and February, 2020, exceeded that of the entire Q3 in FY19.
 
 * Changes from the FY19 campus tours campaign included the addition of  Programmatic (DBM) display and Snapchat video platforms. 
 

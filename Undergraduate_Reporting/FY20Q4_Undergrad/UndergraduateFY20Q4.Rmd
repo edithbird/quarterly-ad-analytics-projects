@@ -1,0 +1,280 @@
+---
+title: "FA20 Undergraduate Campaign Quarterly Ad Analytics Project: FY20 Q4"
+author: "Office of Marketing and Brand Management"
+date: "7/15/2020"
+output:
+  pdf_document:
+fontsize: 11pt
+mainfont: Calibri
+sansfont: Calibri
+monofont: Calibri
+geometry: margin=1in
+---
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r include=FALSE}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(tinytex)
+library(hms)
+library(lubridate)
+library(stringr)
+library(tidyr)
+```
+
+
+```{r, include=FALSE}
+options(tinytex.verbose = TRUE)
+```
+
+### Brief Description:
+
+Our FY20 Q4 digital campaign promoting the University's Undergraduate program to in-state High School students and their influencers consists of a large variety of media platforms. New ad creative and landing pages were rolled out on February 18,2020. Transition from /here to /excel has been seamless and we see good results. It is difficult to speculate as to how Covid-19 may have impacted campaign performance, nevertheless, it is important to note that the social distancing due to the global pandemic became mandatory for the entire third month of the quarter. 
+
+
+```{r}
+NewData1 <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/Flowchart.csv", header = T, stringsAsFactors = F)
+```
+
+```{r}
+# NewData2 <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartHS_V2.csv",header = T, stringsAsFactors = F)
+
+```
+
+# Audience
+
+## H.S. Students
+
+```{r}
+
+```
+
+
+# Findings by Audience
+
+
+
+```{r}
+
+HS_NewDataFY20 <-  NewData1 %>% filter(Quarter == "FY20Q4" & str_detect(AdSet, "HS")) %>%  
+  separate(Vendor, c("Vendor", "Medium")) %>% 
+  arrange(Medium, Vendor)
+HS_NewDataFY20 <- HS_NewDataFY20 %>%  select(Vendor:End_Date) %>% arrange(Medium, Vendor)
+
+
+#NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
+landscape(knitr::kable(HS_NewDataFY20, "latex", caption = "High School Student Audience FY20 Q4 Campaign Review: Undergraduate Degree", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Display", 1, 1) %>%
+  pack_rows("Story", 2, 2) %>%
+  pack_rows("Video", 3, 6)
+  
+```
+
+
+
+
+```{r}
+IN_NewDataFY20 <-  NewData1 %>% filter(Quarter == "FY20Q4" & str_detect(AdSet, "IN")) %>%  
+  separate(Vendor, c("Vendor", "Medium")) %>% 
+  arrange(Medium, Vendor)
+
+IN_NewDataFY20 <- IN_NewDataFY20 %>%  select(Vendor:End_Date) %>% arrange(Medium, Vendor)
+
+landscape(knitr::kable(IN_NewDataFY20, "latex", caption = "Influencer Audience FY20 Q4 Campaign Review: Undergraduate Degree", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Display", 1, 1) %>%
+  pack_rows("Video", 2, 2)
+```
+
+
+
+
+```{r eval=FALSE, include=FALSE}
+NewDataFY19Q4 <-  NewDataFY19Q4 %>%
+  mutate(Vendor = Vendor, 
+         Medium = Medium,
+         Impressions = Impressions,
+    CTR = cell_spec(CTR, "latex", color = ifelse(CTR == "0.38%", "red", "black")),
+    UPV = UPV, 
+    Cost = cell_spec(Cost, "latex", color = ifelse(Cost == "$ 4939.1", "red", "black"))
+    
+  ) %>%
+  select(Vendor, Impressions,CTR, UPV,Cost)
+
+
+landscape(kable(NewDataFY19Q3, format = "latex", escape = F, caption =  "FY20 Q4 Undergraduate Campaign Targeting HS Students", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Display", 1, 4) %>%
+  pack_rows("Video", 7, 13) %>%
+  pack_rows("Instagram Stories", 5, 6) 
+
+
+  # kable(format = "latex", escape = F, booktabs = T) %>%
+  # kable_styling(full_width = T)%>%
+  # row_spec(0, angle = -45) %>%
+  # pack_rows("Display", 1, 4)%>%
+  # pack_rows("IG Stories", 5, 6)%>%
+  # pack_rows("Video", 7, 13)
+```
+
+
+```{r eval=FALSE, include=FALSE}
+NewDataFY19Q4 <- NewData1 %>% filter(Quarter == "FY20Q4" & str_detect(AdSet, "FA21_UG_IN_PIN_DISP_BR")) %>%  separate(Vendor, c("Vendor", "Medium")) %>% select(Medium, Vendor, Quarter, Impressions:End_Date) %>% arrange(Medium, Vendor)
+#NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
+landscape(knitr::kable(NewDataFY19Q4, "latex", caption = "FY20 Q4 Undergraduate Campaign Targeting HS Students", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) 
+  
+```
+
+Inquiries
+
+```{r eval=FALSE, include=FALSE}
+Forms <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/ThankYouFormCompletions.csv", header = T, stringsAsFactors = F)
+
+DCForms <- Forms %>% filter(str_detect(Initial.Referral.Source,"HS")) %>% 
+  mutate(
+    Date = as.Date(Initial.Source.Date, format = "%m/%d/%Y"),
+    FY = ifelse(Date < "2019-07-01", "FY19","FY20"), 
+    Quarter = paste0((FY),"Q",quarter(Date, with_year = FALSE, fiscal_start = 7))
+    
+  ) %>% select(FY, Quarter,Date, everything())
+
+DCForms <- DCForms %>% filter(str_detect(Initial.Referral.Source, "HS"), str_detect(Quarter, "4"))
+kable(DCForms %>%  
+        group_by(FY, Quarter) %>% 
+        summarise(`Total Inquiries this Quarter` = n()))
+```
+
+
+```{r}
+Forms <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/ThankYouFormCompletions.csv", header = T, stringsAsFactors = F)
+
+
+
+DCForms <- Forms %>% filter(str_detect(Initial.Referral.Source,"HS")) %>% 
+  mutate(Date = as.Date(Initial.Source.Date, format = "%m/%d/%Y"),
+         LandingPage = 
+           ifelse(Date <= "2019-08-01","/everyone",
+                  ifelse(Date > "2019-08-01" & Date < "2020-02-18", "/here", "/excel")),
+         FY = ifelse(Date < "2019-07-01", "FY19","FY20"), 
+         Quarter = paste0((FY),"Q",quarter(Date, with_year = FALSE, fiscal_start = 7))
+    
+  ) %>% select(FY, Quarter,Date, everything())
+
+DCForms <- DCForms %>% filter(str_detect(Initial.Referral.Source, "HS"), str_detect(Quarter, "4"))
+kable(DCForms %>%  
+        group_by(FY, Quarter, LandingPage) %>% 
+        summarise(`Total Inquiries this Quarter` = n()))
+```
+
+Conclusions:
+
+* __Programmatic Display__: This quarter brought a smaller DBM campaign. The \textcolor{red}{CTR dropped} to 0.07% in Q4 from 0.11% in Q3. We haven't seen CTR this low from DBM in FY20. Although we budgeted about 65% less this quarter, CTR should not have been affected. UPV were down 40% from the previous quarter, not as drastically as the budget. 
+
+* __Pinterest Display:__  Pinterest ran through most of this quarter and performed impressively.  The CTR was well above benchmark.
+		
+* __Instagram Stories:__ Overall, the CTR,
+			UPV, and other KPI have performed at the same level as the previous quarter.Get VTR and VTR.
+			
+* __Facebook Video:__ We doubled the budget for this platform from the previous quarter. While we did not see the same increase in web traffic, there was a small one. The CTR dropped from 0.42% to
+0.33%. VR and VTR need to be checked.
+
+* __Instagram Video:__ Like Facebook, we doubled the budget for this platform in 04. The CTR dropped slightly while UPV nearly doubled as well.
+
+*	__Pinterest Video:__ Q4 performance is on par with Q3's. 
+
+* __Snapchat Video:__ As anticipated web traffic dropped from last quarter, however we saw an unusual amount in Q3. Nonetheless the CTR went up from Q3. It remains well above benchmark.
+
+* __Youtube Video:__ Performed on par with Q3.Check VR and VTR though Budget doubled. national benchmark of 20%
+
+
+*	__Pinterest for Influencers:__ Performance in Q4 has been similar to that in Q3.
+
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+* __Instagram Stories__: We do not have benchmarks for this platform, however since last quarter, which was first time we started differentiating them from IG video, we have seen consistent view rates at 88%  and VTR at 0.8%. As we have increased spending, we have seen a commensurate increase in web traffic.
+
+* __Snapchat Video__: Snapchat continues to show strong CTR at the national benchmark. Also Q3's strong growth in UPV is in large part due this platform. While it has a bounce rate in the high 90's, it seems that USM would be getting a great deal of visibility.
+
+* __Youtube Video__: The view rate is slightly down from last quarter, it continues to be well above the national benchmark of 20%.
+
+* __Facebook Video__: While we do not have benchmarks, we see view rates have been stable for 7 quarters. 
+
+* __Instagram Video__: We do not have benchmarks for this platform, but can see that view rates have been stable over the last 7 quarters and are higher in FY20 than they were in FY19. Moving forward, it would be good if Rinck could update us on benchmarks and expectations for both IG and FB.
+
+* I have attached a more detailed performance table below which highlights the differences between the 2 different creatives. 
+
+* Lastly, please note the \textcolor{red}{100 percent bounce rate and zero minutes average time-on-page} for Pinterest ads to the HS student audience. This seems like an anomoly. I'll address this with the agency. 
+
+
+```{r eval=FALSE, include=FALSE}
+NewDataFY19Q3 <- NewData1 %>% 
+  filter(Quarter == "FY20Q3" & str_detect(AdSet, "HS")) %>%
+  separate(Vendor, c("Vendor", "Medium")) %>% 
+  select(Medium, Vendor, Quarter, Impressions:End_Date) %>% 
+  arrange(Medium, Vendor)
+#NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
+landscape(knitr::kable(NewDataFY19Q3, "latex", caption = "FY20 Q3 Undergraduate Campaign Targeting In-State High School Students and their Influencers", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Display", 1, 4) %>%
+  pack_rows("Video", 7, 13) %>%
+  pack_rows("Instagram Stories", 5, 6) 
+  
+```
+
+
+
+

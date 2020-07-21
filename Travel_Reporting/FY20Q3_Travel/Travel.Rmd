@@ -43,13 +43,14 @@ options(knitr.table.format = "latex")
 
 Marketing is currently in the middle of its Spring Travel Campaign and will be running ads through May, 2020. Traditionally, Marketing has deployed these ads out-of-state,  geo-targeting high school students where USM Admissions' Counselors host various events. In a turn of circumstances, fairs and visits were all cancelled due to the COVID-19 pandemic.  The ads, which promote the University's RSP program, and not any specific events, have been live nonetheless and driving an impressive number of unique pageviews to the campaign landing page. 
 
+It is difficult to speculate as to how Covid-19 may have impacted  performance, nevertheless, it is important to note that the social distancing due to the global pandemic became mandatory for the entire third month of the quarter. Digital and social media platforms remain a primary means of staying connected.
+
 
 ```{r}
 NewData <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartTravel.csv", header = T, stringsAsFactors = F)
 ```
 
 ## Findings
-
 
 
 ```{r}
@@ -61,11 +62,31 @@ NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY20Q3") %>%  separate(Vendor, c
 
 color.me <- which(NewDataFY19Q3$CTR == "0.18%")
 #NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
-landscape(knitr::kable(NewDataFY19Q3, "latex",caption = "FY20 Q3 Graduate Campaign Targeting All Audiences", booktabs = T))%>%
+landscape(knitr::kable(NewDataFY19Q3, "latex",caption = "FY20 Q3 Spring Travel Campaign Targeting Out-of-State HS Student Audiences", booktabs = T))%>%
 kable_styling(full_width = T)  %>%
   row_spec(0, angle = -45) %>%
   pack_rows("Display", 1, 1) %>%
   pack_rows("Video", 2, 3) 
+# %>%
+#   row_spec(color.me, bold = T, color = "red", background = "white")
+```
+
+
+```{r}
+
+
+
+NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY19Q3") %>%  separate(Vendor, c("Vendor", "Medium")) %>% 
+  select(Medium, Vendor, Quarter, Impressions:Start_Date) %>% arrange(Medium, Vendor)
+
+#color.me <- which(NewDataFY19Q3$CTR == "0.18%")
+#NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
+landscape(knitr::kable(NewDataFY19Q3, "latex",caption = "FY19 Q3 Spring Travel Campaign Targeting Out-of-State HS Student Audiences", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Carousel", 1, 2) %>%
+  pack_rows("Display", 3, 5) %>% 
+  pack_rows("Video", 6,7)
 # %>%
 #   row_spec(color.me, bold = T, color = "red", background = "white")
 ```
@@ -76,19 +97,27 @@ kable_styling(full_width = T)  %>%
 
 ### Conclusions
 
-* The Spring Travel Campaign consists of Programmatic display, and Facebook (FB) and Snapchat (SC)video ads, in contrast to that of last fall which also ran social display ads. 
+* The Spring Travel Campaign consists of Programmatic (DBM) display, and Facebook (FB) and Snapchat (SC) video ads, in contrast to that of last Spring which also ran social carousel, display and video ads, in addition to Programmatic display. Last Spring's Travel Campaign did not feature Snapchat video.  
 
-* Programmatic display and Snapchat video ads performed well. Their CTRs are above benchmarks and they drive a great deal of traffic to the campaign landing page. Performance midway through the campaign has surpassed that of last Fall's entire campaign. 
-* Although we do not have benchmarks for Facebook video ads, view-rates have remained consistent and view-through-rates have improved from the Fall Travel Campaign.
+* DBM display ads performed well. Their CTR is above the USM benchmark. In terms of web traffic driven by these ads, we see more than twice as many UPV in FY20 Q3 than in FY19 Q3. Performance midway through the campaign has surpassed that of last Fall's entire campaign. 
+
+* SC video ads performed well. Their CTRs are above benchmarks and they drive a great deal of traffic to the campaign landing page. This is our first time using SC in a travel campaign and the results are exciting.
+
+* Although we do not have benchmarks for FB video ads, view-rates have remained consistent and view-through-rates have improved from the Fall Travel Campaign and are consistent with those from last Spring's travel campaign. Also note that there are four times as many UPV to the landing page when comparing FY20 Q3 to FY19 Q3.
+
+* We can compare the Q3 performance of both DBM Display and FB Video in FY19 and FY20. DBM has a slightly higher CTR this year (0.18% in FY20 vs 0.17% in FY19), over double the UPV (1114 vs 465), a lower bounce rate (79% vs 86%), and a slightly lower average time on page (30 seconds vs 35 seconds). FB video has a higher CTR, 0.81% vs 0.66%, and quadruple the number of UPV, 1140 vs 229, in FY20 than FY19. Additionally, the view and view through rates have remained relatively stable year over year. 
+
 
 * Limiting the FB to video does not appear to have a negative impact on ad driven web traffic.
+
+* The addition of SC to the Travel campaign has clearly enhanced online activity, but another possible explanation of the surge of web traffic could be that users are spending more time online because of COVID-19 quatentines. This remains to be determined. 
 
 * This campaign runs through May.
 
 
 
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY19Q3" )%>%  separate(Vendor, c("Vendor", "Medium")) %>% select(Medium, Vendor, Quarter, Impressions:End_Date) %>% arrange(Medium, Vendor)
 #NewDataFY19Q3 <- NewDataFY19Q3[,c(4:12)]
 landscape(kable(NewDataFY19Q3, "latex", caption = "FY19 Q3 Travel Campaign for a High School Students", booktabs = T))%>%
@@ -100,7 +129,7 @@ kable_styling(full_width = T)  %>%
 ```
 
 
-* Out-of-State HS students are being targeted in promotion of the undergraduate degree program. 
+
 
 ```{r}
 
@@ -154,4 +183,24 @@ NewDataFY19Q3[1:7, 1:11] %>%
     CTR = cell_spec(CTR, "latex", color = ifelse(CTR == "0.34%", "red", "black"))) %>%
   kable(format = "latex", escape = FALSE) %>%
   kable_styling("striped", full_width = F)
+```
+
+
+```{r eval=FALSE, include=FALSE}
+
+
+
+NewDataFY19Q3 <- NewData %>% filter(Quarter == "FY19Q3") %>%  separate(Vendor, c("Vendor", "Medium")) %>% 
+  select(Medium, Vendor, Quarter, Impressions:End_Date) %>% arrange(Medium, Vendor)
+
+color.me <- which(NewDataFY19Q3$CTR == "0.18%")
+#NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
+landscape(knitr::kable(NewDataFY19Q3, "latex",caption = "FY19 Q3 Graduate Campaign Targeting All Audiences", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Carousel", 1, 2) %>%
+  pack_rows("Display", 3, 5) %>%
+  pack_rows("Video", 6, 7) 
+# %>%
+#   row_spec(color.me, bold = T, color = "red", background = "white")
 ```

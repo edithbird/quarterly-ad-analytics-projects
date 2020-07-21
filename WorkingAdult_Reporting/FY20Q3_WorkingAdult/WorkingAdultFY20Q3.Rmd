@@ -103,7 +103,9 @@ NewDataFY20 <-  NewData %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "WA")
 
 ### Brief Description:
 
-The FY20 advertising campaign targeting working adults (WA) has been multiphasic; part III started midway through the 3rd quarter. The Q3 portfolio consists mainly of Programmatic and Facebook display and LinkedIn and Gmail Inbox; a small amount goes to Facebook video.The new ad creative landing pages were rolled out on February 18,2020. Transition from /here to /excel has been seemless.
+The FY20 advertising campaign targeting working adults (WA) has been multiphasic; part III started midway through the 3rd quarter. The Q3 portfolio consists mainly of Programmatic and Facebook display and LinkedIn and Gmail Inbox; a small amount goes to Facebook video.The new ad creative landing pages were rolled out on February 18,2020. Transition from /here to /excel has been seamless. 
+
+It is difficult to speculate as to how Covid-19 may have impacted  performance, nevertheless, it is important to note that the social distancing due to the global pandemic became mandatory for the entire third month of the quarter. Digital and social media platforms remain a primary means of staying connected.
 
 ### Findings
 
@@ -195,7 +197,7 @@ Forms <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/T
 DCForms <- Forms %>% filter(str_detect(Initial.Referral.Source,"DC")) %>% 
   mutate(Date = as.Date(Initial.Source.Date, format = "%m/%d/%Y"),
          LandingPage = 
-           ifelse(Date <= "2019-08-01","/other",
+           ifelse(Date <= "2019-08-01","/everyone",
                   ifelse(Date > "2019-08-01" & Date < "2020-02-18", "/here", "/excel")),
          FY = ifelse(Date < "2019-07-01", "FY19","FY20"), 
          Quarter = paste0((FY),"Q",quarter(Date, with_year = FALSE, fiscal_start = 7))
@@ -222,7 +224,9 @@ kable(DCForms %>%
 
 * __Facebook Video:__ There is a small budget for this platform and, while we do not have benchmarks, both View Rates and View-thru-Rates are higher than we say FY20Q1.
 
-* __Inquiries:__ Form completions are \textcolor{red}{down} as displayed above. More inquiry forms were completed during the /excel campaign.
+* __Inquiries:__ Form completions are \textcolor{red}{down by one from FY19 Q3} as displayed above. More inquiry forms were completed during the /excel campaign.
+
+* It looks as though we had started to run Instagram display and video ads, then \textcolor{red}{decided against it}. I will discuss this with Rinck.
 
 * On the next page, I have provided a table to show the breakdown between the Fall and Spring creative.
 

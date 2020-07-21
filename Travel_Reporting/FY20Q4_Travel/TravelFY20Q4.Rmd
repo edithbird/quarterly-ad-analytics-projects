@@ -1,0 +1,104 @@
+---
+title: "FA20 Travel Campaign Quarterly Ad Analytics Project: FY20 Q4"
+author: "Office of Marketing and Brand Management"
+date: "7/20/2020"
+output:
+  pdf_document:
+fontsize: 11pt
+mainfont: Calibri
+sansfont: Calibri
+monofont: Calibri
+geometry: margin=1in
+---
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(tinytex)
+library(hms)
+library(lubridate)
+library(stringr)
+library(tidyr)
+```
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+options(tinytex.verbose = TRUE)
+```
+
+### Brief Description:
+
+Our FY20 Q4 digital campaign promoting the University's Undergraduate program to out-of-state High School students and their influencers consists of a large variety of media platforms. New ad creative and landing pages were rolled out on ____. It is difficult to speculate as to how Covid-19 may have impacted campaign performance, nevertheless, it is important to note that the social distancing due to the global pandemic became mandatory for the entire third month of the quarter. 
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+NewData1 <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/Flowchart.csv", header = T, stringsAsFactors = F)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+HS_NewDataFY20 <-  NewData1 %>% filter(Quarter == "FY20Q4" & str_detect(AdSet, "TL")) %>%  
+  separate(Vendor, c("Vendor", "Medium")) %>% 
+  arrange(Medium, Vendor)
+HS_NewDataFY20 <- HS_NewDataFY20 %>%  select(Vendor, Impressions:Start_Date) 
+
+landscape(knitr::kable(HS_NewDataFY20, "latex", caption = "Out-of_State High School Student Audience FY20 Q4 Campaign Review: Undergraduate Degree", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Display", 1, 1) %>%
+  pack_rows("Video", 2, 3)
+  
+```
+
+
+
+
+
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+Forms <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/ThankYouFormCompletions.csv", header = T, stringsAsFactors = F)
+
+
+
+DCForms <- Forms %>% filter(
+  Primary.State.Province != "Maine" & str_detect(Initial.Referral.Source,"HS")) %>% 
+  mutate(Date = as.Date(Initial.Source.Date, format = "%m/%d/%Y"),
+         LandingPage = 
+           ifelse(Date <= "2019-08-01","/everyone",
+                  ifelse(Date > "2019-08-01" & Date < "2020-02-18", "/here", "/excel")),
+         FY = ifelse(Date < "2019-07-01", "FY19","FY20"), 
+         Quarter = paste0((FY),"Q",quarter(Date, with_year = FALSE, fiscal_start = 7))
+    
+  ) %>% select(FY, Quarter,Date, everything())
+
+DCForms <- DCForms %>% filter(str_detect(Initial.Referral.Source, "HS"), str_detect(Quarter, "4"))
+kable(DCForms %>%  
+        group_by(FY, Quarter) %>% 
+        summarise(`Total Inquiries this Quarter` = n()))
+```
+
+Conclusions:
+
+* __Programmatic Display__:  
+
+
+
+* __Facebook Video:__ 
+
+
+* __Snapchat Video:__ 
+
+
+

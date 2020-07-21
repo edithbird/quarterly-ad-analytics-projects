@@ -11,7 +11,7 @@ library(stringr)
 
 objective <- c("ER", "VT")
 
-FMOrig <- read.csv("C:/Users/christine.iyer/Downloads/MKT_output.csv", header = T, stringsAsFactors = F)
+FMOrig <- read.csv("file:///Z:/DAA/Marketing/MKT_output.csv", header = T, stringsAsFactors = F)
  
 
 

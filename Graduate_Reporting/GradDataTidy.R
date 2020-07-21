@@ -12,9 +12,9 @@ library(stringr)
 
 
 
-FMOrig <- read.csv("C:/Users/christine.iyer/Downloads/MKT_output (2).csv", header = T, stringsAsFactors = F)
-
-
+#FMOrig <- read.csv("C:/Users/christine.iyer/Downloads/MKT_output (2).csv", header = T, stringsAsFactors = F)
+FMOrig <- read.csv("Z:/DAA/Marketing/MKT_output.csv", header = T, stringsAsFactors = F)
+head(FMOrig)
 
 FM <- FMOrig %>% filter(Master_Adname_Type == "NC" )
 FM <- FM %>%
@@ -27,7 +27,7 @@ FM <- FM %>%
 
 FM <- FM %>% 
   mutate_at(10:31, ~replace(., is.na(.), 0)) %>% 
-  mutate(Master_Date = as.Date(Master_Date, format = "%m/%d/%Y"), 
+  mutate(Master_Date = as.Date(Master_Date, format = "%Y-%m-%d"), 
          Master_Results = as.numeric(Master_Results), 
          Master_Engagements = as.numeric(Master_Engagements)) %>% 
   arrange(Master_Date) 
