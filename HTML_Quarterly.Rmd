@@ -1,0 +1,45 @@
+---
+title: "KPI"
+author: "Office of Marketing and Brand Management"
+date: "7/21/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+library(tidyverse)
+library(knitr)
+library(reactable)
+library(hms)
+```
+
+```{r}
+data <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/Flowchart_R.csv", header = T, stringsAsFactors = F)
+```
+
+
+```{r}
+reactable(data, searchable = TRUE, filterable = TRUE, groupBy = c("Quarter", "Ad"), columns = list(
+  
+  Cost = colDef(aggregate = "sum", format = colFormat(prefix = "$", separators = TRUE, digits = 2),filterable = FALSE),
+  Impressions = colDef(aggregate = "sum", format = colFormat(separators = TRUE),filterable = FALSE),
+  UPV = colDef(aggregate = "sum",filterable = FALSE),
+  CTR = colDef(aggregate = "mean", format = colFormat(percent = TRUE, digits = 1),filterable = FALSE),
+  BR = colDef(aggregate = "mean",format = colFormat(percent = TRUE, digits = 1),filterable = FALSE) 
+), bordered = TRUE, striped = TRUE, highlight = TRUE, 
+  showSortIcon = TRUE, fullWidth = FALSE)
+```
+

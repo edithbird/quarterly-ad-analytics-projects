@@ -61,9 +61,46 @@ NewData1 <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-project
 ```
 
 
-# Findings by Audience
+# Findings by Audience 
 
 
+
+```{r}
+
+HS_NewDataFY20_Q3 <-  NewData1 %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "HS")) %>%  
+  separate(Vendor, c("Vendor", "Medium")) %>% 
+  arrange(Medium, Vendor)
+HS_NewDataFY20_Q3 <- HS_NewDataFY20_Q3 %>%  select(Vendor:End_Date) %>% arrange(Medium, Vendor)
+
+
+#NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
+landscape(knitr::kable(HS_NewDataFY20_Q3, "latex", caption = "High School Student Audience FY20 Q3 Campaign Review: Undergraduate Degree", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Display", 1, 6) %>%
+  pack_rows("Story", 7, 8) %>%
+  pack_rows("Video", 9, 15)
+  
+```
+
+
+```{r}
+
+HS_NewDataFY19Q4 <-  NewData1 %>% filter(Quarter == "FY19Q4" & str_detect(AdSet, "HS")) %>%  
+  separate(Vendor, c("Vendor", "Medium")) %>% 
+  arrange(Medium, Vendor)
+HS_NewDataFY19Q4 <- HS_NewDataFY19Q4 %>%  select(Vendor:End_Date) %>% arrange(Medium, Vendor)
+
+
+#NewDataFY19Q3 <- NewDataFY19Q3[,c(4:13)]
+landscape(knitr::kable(HS_NewDataFY19Q4, "latex", caption = "High School Student Audience FY19 Q4 Campaign Review: Undergraduate Degree", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Carousel", 1, 2) %>%
+  pack_rows("Display", 3, 4) %>%
+  pack_rows("Video", 5, 7)
+  
+```
 
 ```{r}
 
@@ -83,7 +120,19 @@ kable_styling(full_width = T)  %>%
   
 ```
 
+```{r}
+IN_NewDataFY20Q3 <-  NewData1 %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "IN")) %>%  
+  separate(Vendor, c("Vendor", "Medium")) %>% 
+  arrange(Medium, Vendor)
 
+IN_NewDataFY20Q3 <- IN_NewDataFY20Q3 %>%  select(Vendor:End_Date) %>% arrange(Medium, Vendor)
+
+landscape(knitr::kable(IN_NewDataFY20Q3, "latex", caption = "Influencer Audience FY20 Q3 Campaign Review: Undergraduate Degree", booktabs = T))%>%
+kable_styling(full_width = T)  %>%
+  row_spec(0, angle = -45) %>%
+  pack_rows("Display", 1, 1) %>%
+  pack_rows("Video", 2, 2)
+```
 
 
 ```{r}
