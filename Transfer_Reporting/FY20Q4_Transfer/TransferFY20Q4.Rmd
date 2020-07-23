@@ -40,24 +40,14 @@ options(tinytex.verbose = TRUE)
 
 ### Brief Description:
 
-Our FY20 Q4 digital campaign promoting the University's Transfer program
+Our FY20 Q4 digital ads promoting the University's Transfer program was in its final phase of the 3 part campaign. Overall the campaign drove more that double the traffic it had in Q3.Inquiries remained steady from the previous quarter. 
 
 
 ```{r}
 NewData1 <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/Flowchart.csv", header = T, stringsAsFactors = F)
 ```
 
-# Audience
-
-## Current Undergraduates
-
-```{r}
-
-```
-
-
-
-
+### Findings:
 
 ```{r}
 
@@ -80,9 +70,9 @@ kable_styling(full_width = T)  %>%
 
 Inquiries
 
-```{r eval=FALSE, include=FALSE}
+```{r }
 Forms <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/ThankYouFormCompletions.csv", header = T, stringsAsFactors = F)
-unique(Forms$Initial.Referral.Source)
+
 DCForms <- Forms %>% filter(str_detect(Initial.Referral.Source,"TR")) %>% 
   mutate(
     Date = as.Date(Initial.Source.Date, format = "%m/%d/%Y"),
@@ -97,31 +87,26 @@ kable(DCForms %>%
         summarise(`Total Inquiries this Quarter` = n()))
 ```
 
-Conclusions:
+### Conclusions:
 
-* __Programmatic Display__: 
+* __Programmatic Display__: Performed very well. The budget for this platform doubled from the previous quarter and the web traffic tripled while dropping the BR slightly. The average time on page also doubled from 15 to 30 seconds.
 
-* __Pinterest Display:__  
 		
-* __Instagram Stories:__ 
+* __Instagram Stories:__ We saw a drop in CTR, VR, and VTR from the previous quarter, however, without benchmarks, it's difficult to speculate on performance. There were more webpage visits. The budget is relatively low for this platform, ~$200.00.
 			
 			
-* __Facebook Video:__ 
+* __Facebook Video:__ This platform showed increases in all metrics from from Q3 to Q4, with the exception of a slight drop in CTR. However, without benchmarks, it's difficult to speculate on performance.
 
-* __Instagram Video:__ 
+* __Instagram Video:__ Like FB video, this platform showed increases in all metrics from from Q3 to Q4, with the exception of a slight drop in CTR. However, without benchmarks, it's difficult to speculate on performance.
 
-*	__Pinterest Video:__ 
+* __Snapchat Video:__ We saw an anticipated drop in web traffic from the previous quarter; Q3 UPV were remarkably high. The CTR is well above benchmark. 
 
-* __Snapchat Video:__ 
+* __Youtube Video:__ The budget nearly quadrupled this quarter from Q3 yet the CTR and VTR dropped while the VR went up. The media benchmarks provided by Rinck state the VTR should be 20% while ours is 0.01%. I suspect there is a gap in our communication and will reach out. 
 
-* __Youtube Video:__ 
-
-
-*	__Pinterest for Influencers:__ 
+* __Inquiries__ in Q4 have remained steady from Q3, though they are lower than FY20 Q4. This pattern has been consistent with all of the inquiry generating campaigns. 
 
 
-
-
+\href{https://www.wrike.com/open.htm?id=502327784}{{\color{blue}{\underline{Wrike Project Details}}}}
 
 
 

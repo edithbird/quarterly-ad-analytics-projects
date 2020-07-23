@@ -40,7 +40,7 @@ options(tinytex.verbose = TRUE)
 
 ### Brief Description:
 
-Our FY20 Q4 digital campaign promoting the University's Transfer program
+Overall the FY20 Q4 digital campaign promoting the University's Graduate program saw a 72% increase in web traffic on a budget that was 14% smaller. However inquiries dropped to their lowest in nearly 2 years and are 80% lower than they were in FY19Q3, when they were at their apex. (FY19Q4 = 75, FY20Q4 = 15.) Despite this, digital ads performed as hoped. 
 
 
 ```{r}
@@ -48,6 +48,7 @@ NewData1 <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-project
 ```
 
 
+### Findings
 
 ```{r}
 
@@ -69,9 +70,8 @@ kable_styling(full_width = T)  %>%
 
 Inquiries
 
-```{r eval=FALSE, include=FALSE}
+```{r }
 Forms <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/ThankYouFormCompletions.csv", header = T, stringsAsFactors = F)
-unique(Forms$Initial.Referral.Source)
 DCForms <- Forms %>% filter(str_detect(Initial.Referral.Source,"GR")) %>% 
   mutate(
     Date = as.Date(Initial.Source.Date, format = "%m/%d/%Y"),
@@ -86,31 +86,24 @@ kable(DCForms %>%
         summarise(`Total Inquiries this Quarter` = n()))
 ```
 
-Conclusions:
 
-* __Programmatic Display__: 
 
-* __Pinterest Display:__  
+### Conclusions:
+
+* __Programmatic Display__: The \textcolor{red}{CTR dropped} from 0.1% in Q3 to 0.07% in Q4. Nevertheless, this value is higher than those we saw with Programmatic Umbrella ads. The web traffic dropped by the same amount that the budget did while the BR was better. 
 		
-* __Instagram Stories:__ 
+* __Instagram Display:__ Q4 CTR increased slightly from Q3. It remains well above benchmark. UPV were also up.
 			
 			
-* __Facebook Video:__ 
+* __Facebook Video:__ All performance metrics remained steady and the BR was better. The budget was slightly larger.
 
-* __Instagram Video:__ 
+* __Instagram Video:__ Like FB video, all performance metrics remained steady and the BR was better. 
 
-*	__Pinterest Video:__ 
-
-* __Snapchat Video:__ 
-
-* __Youtube Video:__ 
-
-
-*	__Pinterest for Influencers:__ 
+* __Inquiries:__ As mentioned in the introduction above, inquiries are at a nearly \textcolor{red}{2 year low} . This is inconsistent with the growth in Graduate applications this year. 
 
 
 
-
+\href{https://www.wrike.com/open.htm?id=502328134}{{\color{blue}{\underline{Wrike Project Details}}}}
 
 
 

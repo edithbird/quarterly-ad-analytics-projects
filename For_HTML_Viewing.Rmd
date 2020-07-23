@@ -29,13 +29,17 @@ library(tidyr)
 ![](C:/Users/christine.iyer/Pictures/Logo.jpg)
 
 ```{r}
+library(chron)
 NewData1 <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/Flowchart - Copy.csv", header = T, stringsAsFactors = F)
 NewData1 <- NewData1 %>% 
   mutate(CTR = as.numeric(CTR),
-         BR = as.numeric(BR))
+         BR = as.numeric(BR),
+         Cost = as.numeric(Cost),
+        # hms("12:34:45") - hms("00:00:00")
+         #Av_TOP = mean(times(Av_TOP)), 
+        Av_TOP = as.numeric(hms(Av_TOP)))
+
 ```
-
-
 
 ```{r}
 NewData2 <- NewData1 %>% 
@@ -44,13 +48,15 @@ NewData2 <- NewData1 %>%
   summarise(Impressions = sum(Impressions), 
             CTR = mean(CTR), 
             UPV = sum(UPV), 
-            BR = mean(BR)) %>% 
+            BR = mean(BR), 
+            Cost = sum(Cost),
+            Av_TOP = mean(Av_TOP)) %>% 
 filter(Quarter != "") %>% select(AdSets, Quarter, everything())
 
 
 spec_1 <- build_wider_spec(NewData2,
             names_from = Quarter, 
-            values_from = c(Impressions:BR))
+            values_from = c(Impressions:Av_TOP))
 
 nD_3 <- NewData2 %>% pivot_wider_spec(spec_1, values_fill = 0)
 
@@ -76,7 +82,7 @@ nD4 <- nD_3 %>%
 
 # Product/Audience {.tabset .tabset-pills}
 
-## High School Students {.tabset .tabset-pills}
+## High School Students {.tabset}
 
 ### Impressions
 
@@ -201,6 +207,61 @@ kable(nD4 %>%
   add_header_above(c(" " = 1, "Bounce Rate" = 8))
 ```
 
+### Cost
+
+```{r}
+
+  
+kable(nD4 %>% 
+        filter(Campaign == "HS") %>% 
+        select(AdSets, Cost_FY19Q1:Cost_FY20Q4) %>% 
+        mutate(
+          Cost_FY19Q1 = paste0("$",prettyNum(Cost_FY19Q1, big.mark = ",")),
+          Cost_FY19Q2 = paste0("$",prettyNum(Cost_FY19Q2, big.mark = ",")),
+          Cost_FY19Q3 = paste0("$",prettyNum(Cost_FY19Q3, big.mark = ",")),
+          Cost_FY19Q4 = paste0("$",prettyNum(Cost_FY19Q4, big.mark = ",")),
+          Cost_FY20Q1 = paste0("$",prettyNum(Cost_FY20Q1, big.mark = ",")),
+          Cost_FY20Q2 = paste0("$",prettyNum(Cost_FY20Q2, big.mark = ",")),
+          Cost_FY20Q3 = paste0("$",prettyNum(Cost_FY20Q3, big.mark = ",")),
+          Cost_FY20Q4 = paste0("$",prettyNum(Cost_FY20Q4, big.mark = ","))) %>% 
+        rename(AdSet = AdSets,FY19Q1 = Cost_FY19Q1, FY19Q2 = Cost_FY19Q2, FY19Q3 = Cost_FY19Q3, FY19Q4 = Cost_FY19Q4, FY20Q1 = Cost_FY20Q1, FY20Q2 = Cost_FY20Q2, FY20Q3 = Cost_FY20Q3, FY20Q4 = Cost_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "$0", "~", .)))  %>% 
+  kable_styling("striped")  %>%
+
+  pack_rows("Display", 1, 5) %>%
+  pack_rows("Story", 6, 6) %>%
+  pack_rows("Video", 7, 11) %>%  
+  add_header_above(c(" " = 1, "FY19" = 4, "FY20" = 4)) %>% 
+  add_header_above(c(" " = 1, "Cost" = 8))
+```
+
+### Average Time on Page
+
+```{r}
+
+  
+kable(nD4 %>% 
+        filter(Campaign == "HS") %>% 
+        select(AdSets, Av_TOP_FY19Q1:Av_TOP_FY20Q4) %>% 
+        mutate(
+          Av_TOP_FY19Q1 = prettyNum(Av_TOP_FY19Q1, big.mark = ","),
+          Av_TOP_FY19Q2 = prettyNum(Av_TOP_FY19Q2, big.mark = ","),
+          Av_TOP_FY19Q3 = prettyNum(Av_TOP_FY19Q3, big.mark = ","),
+          Av_TOP_FY19Q4 = prettyNum(Av_TOP_FY19Q4, big.mark = ","),
+          Av_TOP_FY20Q1 = prettyNum(Av_TOP_FY20Q1, big.mark = ","),
+          Av_TOP_FY20Q2 = prettyNum(Av_TOP_FY20Q2, big.mark = ","),
+          Av_TOP_FY20Q3 = prettyNum(Av_TOP_FY20Q3, big.mark = ","),
+          Av_TOP_FY20Q4 = prettyNum(Av_TOP_FY20Q4, big.mark = ",")) %>% 
+        rename(AdSet = AdSets,FY19Q1 = Av_TOP_FY19Q1, FY19Q2 = Av_TOP_FY19Q2, FY19Q3 = Av_TOP_FY19Q3, FY19Q4 = Av_TOP_FY19Q4, FY20Q1 = Av_TOP_FY20Q1, FY20Q2 = Av_TOP_FY20Q2, FY20Q3 = Av_TOP_FY20Q3, FY20Q4 = Av_TOP_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>% 
+  kable_styling("striped")  %>%
+
+  pack_rows("Display", 1, 5) %>%
+  pack_rows("Story", 6, 6) %>%
+  pack_rows("Video", 7, 11) %>% 
+  add_header_above(c(" " = 1, "FY19" = 4, "FY20" = 4)) %>% 
+  add_header_above(c(" " = 1, "Unique Page Views" = 8))
+```
 
 ### Inquiries
 
@@ -229,7 +290,7 @@ kable(DCForms %>% mutate(Program = "HS") %>% select(Program, everything())) %>%
 ```
 
 
-## Current Undergraduates for Transfer {.tabset .tabset-pills}
+## Current Undergraduates for Transfer{.tabset}
 
 ### Impressions
 
@@ -356,6 +417,60 @@ kable(nD4 %>%
   add_header_above(c(" " = 1, "Bounce Rate" = 8))
 ```
 
+### Cost
+
+```{r}
+
+  
+kable(nD4 %>% 
+        filter(Campaign == "TR") %>% 
+        select(AdSets, Cost_FY19Q1:Cost_FY20Q4) %>% 
+        mutate(
+          Cost_FY19Q1 = paste0("$",prettyNum(Cost_FY19Q1, big.mark = ",")),
+          Cost_FY19Q2 = paste0("$",prettyNum(Cost_FY19Q2, big.mark = ",")),
+          Cost_FY19Q3 = paste0("$",prettyNum(Cost_FY19Q3, big.mark = ",")),
+          Cost_FY19Q4 = paste0("$",prettyNum(Cost_FY19Q4, big.mark = ",")),
+          Cost_FY20Q1 = paste0("$",prettyNum(Cost_FY20Q1, big.mark = ",")),
+          Cost_FY20Q2 = paste0("$",prettyNum(Cost_FY20Q2, big.mark = ",")),
+          Cost_FY20Q3 = paste0("$",prettyNum(Cost_FY20Q3, big.mark = ",")),
+          Cost_FY20Q4 = paste0("$",prettyNum(Cost_FY20Q4, big.mark = ","))) %>% 
+        rename(AdSet = AdSets,FY19Q1 = Cost_FY19Q1, FY19Q2 = Cost_FY19Q2, FY19Q3 = Cost_FY19Q3, FY19Q4 = Cost_FY19Q4, FY20Q1 = Cost_FY20Q1, FY20Q2 = Cost_FY20Q2, FY20Q3 = Cost_FY20Q3, FY20Q4 = Cost_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "$0", "~", .))) %>% 
+  kable_styling("striped")  %>%
+  pack_rows("Display", 1, 4) %>%
+  pack_rows("Story", 5, 5) %>%
+  pack_rows("Text", 6,6) %>% 
+  pack_rows("Video", 7, 10) %>% 
+  add_header_above(c(" " = 1, "FY19" = 4, "FY20" = 4)) %>% 
+  add_header_above(c(" " = 1, "Cost" = 8))
+```
+### Average Time on Page
+
+```{r}
+
+  
+kable(nD4 %>% 
+        filter(Campaign == "TR") %>% 
+        select(AdSets, Av_TOP_FY19Q1:Av_TOP_FY20Q4) %>% 
+        mutate(
+          Av_TOP_FY19Q1 = prettyNum(Av_TOP_FY19Q1, big.mark = ","),
+          Av_TOP_FY19Q2 = prettyNum(Av_TOP_FY19Q2, big.mark = ","),
+          Av_TOP_FY19Q3 = prettyNum(Av_TOP_FY19Q3, big.mark = ","),
+          Av_TOP_FY19Q4 = prettyNum(Av_TOP_FY19Q4, big.mark = ","),
+          Av_TOP_FY20Q1 = prettyNum(Av_TOP_FY20Q1, big.mark = ","),
+          Av_TOP_FY20Q2 = prettyNum(Av_TOP_FY20Q2, big.mark = ","),
+          Av_TOP_FY20Q3 = prettyNum(Av_TOP_FY20Q3, big.mark = ","),
+          Av_TOP_FY20Q4 = prettyNum(Av_TOP_FY20Q4, big.mark = ",")) %>% 
+        rename(AdSet = AdSets,FY19Q1 = Av_TOP_FY19Q1, FY19Q2 = Av_TOP_FY19Q2, FY19Q3 = Av_TOP_FY19Q3, FY19Q4 = Av_TOP_FY19Q4, FY20Q1 = Av_TOP_FY20Q1, FY20Q2 = Av_TOP_FY20Q2, FY20Q3 = Av_TOP_FY20Q3, FY20Q4 = Av_TOP_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>% 
+  kable_styling("striped")  %>%
+  pack_rows("Display", 1, 4) %>%
+  pack_rows("Story", 5, 5) %>%
+  pack_rows("Text", 6,6) %>% 
+  pack_rows("Video", 7, 10) %>% 
+  add_header_above(c(" " = 1, "FY19" = 4, "FY20" = 4)) %>% 
+  add_header_above(c(" " = 1, "Average Time on Page" = 8))
+```
 
 ### Inquiries
 
@@ -381,7 +496,7 @@ DCForms <- DCForms %>%
 kable(DCForms %>% mutate(Program = "TR") %>% select(Program, everything())) %>% 
   kable_styling()
 ```
-## Graduate Program {.tabset .tabset-pills}
+## Graduate Program {.tabset}
 
 ### Impressions
 
@@ -503,6 +618,59 @@ kable(nD4 %>%
   add_header_above(c(" " = 1, "FY19" = 4, "FY20" = 4)) %>% 
   add_header_above(c(" " = 1, "Bounce Rate" = 8))
 ```
+### Cost
+
+```{r}
+
+  
+kable(nD4 %>% 
+        filter(Campaign == "GR") %>% 
+        select(AdSets, Cost_FY19Q1:Cost_FY20Q4) %>% 
+        mutate(
+          Cost_FY19Q1 = paste0("$",prettyNum(Cost_FY19Q1, big.mark = ",")),
+          Cost_FY19Q2 = paste0("$",prettyNum(Cost_FY19Q2, big.mark = ",")),
+          Cost_FY19Q3 = paste0("$",prettyNum(Cost_FY19Q3, big.mark = ",")),
+          Cost_FY19Q4 = paste0("$",prettyNum(Cost_FY19Q4, big.mark = ",")),
+          Cost_FY20Q1 = paste0("$",prettyNum(Cost_FY20Q1, big.mark = ",")),
+          Cost_FY20Q2 = paste0("$",prettyNum(Cost_FY20Q2, big.mark = ",")),
+          Cost_FY20Q3 = paste0("$",prettyNum(Cost_FY20Q3, big.mark = ",")),
+          Cost_FY20Q4 = paste0("$",prettyNum(Cost_FY20Q4, big.mark = ","))) %>% 
+        rename(AdSet = AdSets,FY19Q1 = Cost_FY19Q1, FY19Q2 = Cost_FY19Q2, FY19Q3 = Cost_FY19Q3, FY19Q4 = Cost_FY19Q4, FY20Q1 = Cost_FY20Q1, FY20Q2 = Cost_FY20Q2, FY20Q3 = Cost_FY20Q3, FY20Q4 = Cost_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "$0", "~", .))) %>% 
+  kable_styling("striped")  %>%
+  pack_rows("Display", 1, 7) %>%
+  pack_rows("Text", 8, 8) %>%
+  pack_rows("Video", 9,14) %>%  
+  add_header_above(c(" " = 1, "FY19" = 4, "FY20" = 4)) %>% 
+  add_header_above(c(" " = 1, "Cost" = 8))
+```
+
+### Average Time on Page
+
+```{r}
+
+  
+kable(nD4 %>% 
+        filter(Campaign == "GR") %>% 
+        select(AdSets, Av_TOP_FY19Q1:Av_TOP_FY20Q4) %>% 
+        mutate(
+          Av_TOP_FY19Q1 = prettyNum(Av_TOP_FY19Q1, big.mark = ","),
+          Av_TOP_FY19Q2 = prettyNum(Av_TOP_FY19Q2, big.mark = ","),
+          Av_TOP_FY19Q3 = prettyNum(Av_TOP_FY19Q3, big.mark = ","),
+          Av_TOP_FY19Q4 = prettyNum(Av_TOP_FY19Q4, big.mark = ","),
+          Av_TOP_FY20Q1 = prettyNum(Av_TOP_FY20Q1, big.mark = ","),
+          Av_TOP_FY20Q2 = prettyNum(Av_TOP_FY20Q2, big.mark = ","),
+          Av_TOP_FY20Q3 = prettyNum(Av_TOP_FY20Q3, big.mark = ","),
+          Av_TOP_FY20Q4 = prettyNum(Av_TOP_FY20Q4, big.mark = ",")) %>% 
+        rename(AdSet = AdSets,FY19Q1 = Av_TOP_FY19Q1, FY19Q2 = Av_TOP_FY19Q2, FY19Q3 = Av_TOP_FY19Q3, FY19Q4 = Av_TOP_FY19Q4, FY20Q1 = Av_TOP_FY20Q1, FY20Q2 = Av_TOP_FY20Q2, FY20Q3 = Av_TOP_FY20Q3, FY20Q4 = Av_TOP_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>% 
+  kable_styling("striped")  %>%
+  pack_rows("Display", 1, 7) %>%
+  pack_rows("Text", 8, 8) %>%
+  pack_rows("Video", 9,14) %>%  
+  add_header_above(c(" " = 1, "FY19" = 4, "FY20" = 4)) %>% 
+  add_header_above(c(" " = 1, "Average Time on Page" = 8))
+```
 
 ### Inquiries
 
@@ -529,7 +697,7 @@ kable(DCForms %>% mutate(Program = "GR") %>% select(Program, everything())) %>%
   kable_styling()
 ```
 
-## Degree Completion Program {.tabset .tabset-pills}
+## Degree Completion Program {.tabset}
 
 ### Impressions
 
@@ -574,7 +742,7 @@ kable(nD4 %>%
 
   
 kable(nD4 %>% 
-        filter(Campaign == "GR") %>% 
+        filter(Campaign == "DC") %>% 
         select(AdSets, CTR_FY19Q1:CTR_FY20Q4) %>% 
         mutate(
           CTR_FY19Q1 = paste0(round(CTR_FY19Q1*100,2), "%"),
@@ -601,7 +769,7 @@ kable(nD4 %>%
 
   
 kable(nD4 %>% 
-        filter(Campaign == "GR") %>% 
+        filter(Campaign == "DC") %>% 
         select(AdSets, UPV_FY19Q1:UPV_FY20Q4) %>% 
         mutate(
           UPV_FY19Q1 = prettyNum(UPV_FY19Q1, big.mark = ","),
@@ -631,7 +799,7 @@ kable(nD4 %>%
 
   
 kable(nD4 %>% 
-        filter(Campaign == "GR") %>% 
+        filter(Campaign == "DC") %>% 
         select(AdSets, BR_FY19Q1:BR_FY20Q4) %>% 
         mutate(
           BR_FY19Q1 = paste0(round(BR_FY19Q1*100,2), "%"),
@@ -650,6 +818,59 @@ kable(nD4 %>%
   pack_rows("Video", 8,9) %>% 
   add_header_above(c(" " = 1, "FY19" = 4, "FY20" = 4)) %>% 
   add_header_above(c(" " = 1, "Bounce Rate" = 8))
+```
+
+### Cost
+
+```{r}
+kable(nD4 %>% 
+        filter(Campaign == "DC") %>% 
+        select(AdSets, Cost_FY19Q1:Cost_FY20Q4) %>% 
+        mutate(
+          Cost_FY19Q1 = paste0("$",prettyNum(Cost_FY19Q1, big.mark = ",")),
+          Cost_FY19Q2 = paste0("$",prettyNum(Cost_FY19Q2, big.mark = ",")),
+          Cost_FY19Q3 = paste0("$",prettyNum(Cost_FY19Q3, big.mark = ",")),
+          Cost_FY19Q4 = paste0("$",prettyNum(Cost_FY19Q4, big.mark = ",")),
+          Cost_FY20Q1 = paste0("$",prettyNum(Cost_FY20Q1, big.mark = ",")),
+          Cost_FY20Q2 = paste0("$",prettyNum(Cost_FY20Q2, big.mark = ",")),
+          Cost_FY20Q3 = paste0("$",prettyNum(Cost_FY20Q3, big.mark = ",")),
+          Cost_FY20Q4 = paste0("$",prettyNum(Cost_FY20Q4, big.mark = ","))) %>% 
+        rename(AdSet = AdSets,FY19Q1 = Cost_FY19Q1, FY19Q2 = Cost_FY19Q2, FY19Q3 = Cost_FY19Q3, FY19Q4 = Cost_FY19Q4, FY20Q1 = Cost_FY20Q1, FY20Q2 = Cost_FY20Q2, FY20Q3 = Cost_FY20Q3, FY20Q4 = Cost_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "$0", "~", .))) %>% 
+  kable_styling("striped")  %>%
+  pack_rows("Display", 1, 5) %>%
+  pack_rows("Text", 6, 7) %>%
+  pack_rows("Video", 8,9) %>% 
+  add_header_above(c(" " = 1, "FY19" = 4, "FY20" = 4)) %>% 
+  add_header_above(c(" " = 1, "Cost" = 8))
+```
+
+
+### Average Time on Page
+
+```{r}
+
+  
+kable(nD4 %>% 
+        filter(Campaign == "DC") %>% 
+        select(AdSets, Av_TOP_FY19Q1:Av_TOP_FY20Q4) %>% 
+        mutate(
+          Av_TOP_FY19Q1 = prettyNum(Av_TOP_FY19Q1, big.mark = ","),
+          Av_TOP_FY19Q2 = prettyNum(Av_TOP_FY19Q2, big.mark = ","),
+          Av_TOP_FY19Q3 = prettyNum(Av_TOP_FY19Q3, big.mark = ","),
+          Av_TOP_FY19Q4 = prettyNum(Av_TOP_FY19Q4, big.mark = ","),
+          Av_TOP_FY20Q1 = prettyNum(Av_TOP_FY20Q1, big.mark = ","),
+          Av_TOP_FY20Q2 = prettyNum(Av_TOP_FY20Q2, big.mark = ","),
+          Av_TOP_FY20Q3 = prettyNum(Av_TOP_FY20Q3, big.mark = ","),
+          Av_TOP_FY20Q4 = prettyNum(Av_TOP_FY20Q4, big.mark = ",")) %>% 
+        rename(AdSet = AdSets,FY19Q1 = Av_TOP_FY19Q1, FY19Q2 = Av_TOP_FY19Q2, FY19Q3 = Av_TOP_FY19Q3, FY19Q4 = Av_TOP_FY19Q4, FY20Q1 = Av_TOP_FY20Q1, FY20Q2 = Av_TOP_FY20Q2, FY20Q3 = Av_TOP_FY20Q3, FY20Q4 = Av_TOP_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>% 
+  kable_styling("striped")  %>%
+  pack_rows("Display", 1, 5) %>%
+  pack_rows("Text", 6, 7) %>%
+  pack_rows("Video", 8,9) %>% 
+  add_header_above(c(" " = 1, "FY19" = 4, "FY20" = 4)) %>% 
+  add_header_above(c(" " = 1, "Average Time on Page" = 8))
 ```
 
 ### Inquiries
@@ -678,7 +899,7 @@ kable(DCForms %>% mutate(Program = "DC") %>% select(Program, everything())) %>%
   kable_styling()
 ```
 
-## Out-of-State High School Students {.tabset .tabset-pills}
+## Out-of-State High School Students{.tabset}
 
 ### Impressions
 
@@ -793,6 +1014,60 @@ kable(nD4 %>%
   add_header_above(c(" " = 1, "Bounce Rate" = 8))
 ```
 
+### Cost
+
+```{r}
+
+  
+kable(nD4 %>% 
+        filter(Campaign == "TL") %>% 
+        select(AdSets, Cost_FY19Q1:Cost_FY20Q4) %>% 
+        mutate(
+          Cost_FY19Q1 = paste0("$",prettyNum(Cost_FY19Q1, big.mark = ",")),
+          Cost_FY19Q2 = paste0("$",prettyNum(Cost_FY19Q2, big.mark = ",")),
+          Cost_FY19Q3 = paste0("$",prettyNum(Cost_FY19Q3, big.mark = ",")),
+          Cost_FY19Q4 = paste0("$",prettyNum(Cost_FY19Q4, big.mark = ",")),
+          Cost_FY20Q1 = paste0("$",prettyNum(Cost_FY20Q1, big.mark = ",")),
+          Cost_FY20Q2 = paste0("$",prettyNum(Cost_FY20Q2, big.mark = ",")),
+          Cost_FY20Q3 = paste0("$",prettyNum(Cost_FY20Q3, big.mark = ",")),
+          Cost_FY20Q4 = paste0("$",prettyNum(Cost_FY20Q4, big.mark = ","))) %>% 
+        rename(AdSet = AdSets,FY19Q1 = Cost_FY19Q1, FY19Q2 = Cost_FY19Q2, FY19Q3 = Cost_FY19Q3, FY19Q4 = Cost_FY19Q4, FY20Q1 = Cost_FY20Q1, FY20Q2 = Cost_FY20Q2, FY20Q3 = Cost_FY20Q3, FY20Q4 = Cost_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "$0", "~", .))) %>% 
+  kable_styling("striped")  %>%
+  pack_rows("Carousel", 1,2) %>% 
+  pack_rows("Display", 3, 6) %>%
+  pack_rows("Video", 7,9) %>% 
+  add_header_above(c(" " = 1, "FY19" = 4, "FY20" = 4)) %>% 
+  add_header_above(c(" " = 1, "Cost" = 8))
+```
+
+### Average Time on Page
+
+```{r}
+
+  
+kable(nD4 %>% 
+        filter(Campaign == "TL") %>% 
+        select(AdSets, Av_TOP_FY19Q1:Av_TOP_FY20Q4) %>% 
+        mutate(
+          Av_TOP_FY19Q1 = prettyNum(Av_TOP_FY19Q1, big.mark = ","),
+          Av_TOP_FY19Q2 = prettyNum(Av_TOP_FY19Q2, big.mark = ","),
+          Av_TOP_FY19Q3 = prettyNum(Av_TOP_FY19Q3, big.mark = ","),
+          Av_TOP_FY19Q4 = prettyNum(Av_TOP_FY19Q4, big.mark = ","),
+          Av_TOP_FY20Q1 = prettyNum(Av_TOP_FY20Q1, big.mark = ","),
+          Av_TOP_FY20Q2 = prettyNum(Av_TOP_FY20Q2, big.mark = ","),
+          Av_TOP_FY20Q3 = prettyNum(Av_TOP_FY20Q3, big.mark = ","),
+          Av_TOP_FY20Q4 = prettyNum(Av_TOP_FY20Q4, big.mark = ",")) %>% 
+        rename(AdSet = AdSets,FY19Q1 = Av_TOP_FY19Q1, FY19Q2 = Av_TOP_FY19Q2, FY19Q3 = Av_TOP_FY19Q3, FY19Q4 = Av_TOP_FY19Q4, FY20Q1 = Av_TOP_FY20Q1, FY20Q2 = Av_TOP_FY20Q2, FY20Q3 = Av_TOP_FY20Q3, FY20Q4 = Av_TOP_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>% 
+  kable_styling("striped")  %>%
+  pack_rows("Carousel", 1,2) %>% 
+  pack_rows("Display", 3, 6) %>%
+  pack_rows("Video", 7,9) %>% 
+  add_header_above(c(" " = 1, "FY19" = 4, "FY20" = 4)) %>% 
+  add_header_above(c(" " = 1, "Average Time on Page" = 8))
+```
+
 ```{r}
 NewData1 <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/ToursFlowchart - Copy.csv", header = T, stringsAsFactors = F)
 ```
@@ -838,7 +1113,7 @@ nD4 <- nD_3 %>%
 
 
 
-## Tours:High School Students {.tabset .tabset-pills}
+## Tours:High School Students{.tabset}
 
 ### Impressions
 
