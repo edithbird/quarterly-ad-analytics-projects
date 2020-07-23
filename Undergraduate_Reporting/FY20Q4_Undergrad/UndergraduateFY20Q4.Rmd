@@ -47,25 +47,11 @@ Our FY20 Q4 digital campaign promoting the University's Undergraduate program to
 NewData1 <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/Flowchart.csv", header = T, stringsAsFactors = F)
 ```
 
-```{r}
-# NewData2 <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/FlowchartHS_V2.csv",header = T, stringsAsFactors = F)
-
-```
-
-# Audience
-
-## H.S. Students
-
-```{r}
-
-```
-
-
 # Findings by Audience 
 
 
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 
 HS_NewDataFY20_Q3 <-  NewData1 %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "HS")) %>%  
   separate(Vendor, c("Vendor", "Medium")) %>% 
@@ -77,14 +63,14 @@ HS_NewDataFY20_Q3 <- HS_NewDataFY20_Q3 %>%  select(Vendor:End_Date) %>% arrange(
 landscape(knitr::kable(HS_NewDataFY20_Q3, "latex", caption = "High School Student Audience FY20 Q3 Campaign Review: Undergraduate Degree", booktabs = T))%>%
 kable_styling(full_width = T)  %>%
   row_spec(0, angle = -45) %>%
-  pack_rows("Display", 1, 6) %>%
-  pack_rows("Story", 7, 8) %>%
-  pack_rows("Video", 9, 15)
+  pack_rows("Display", 1, 4) %>%
+  pack_rows("Story", 5, 6) %>%
+  pack_rows("Video", 7, 13)
   
 ```
 
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 
 HS_NewDataFY19Q4 <-  NewData1 %>% filter(Quarter == "FY19Q4" & str_detect(AdSet, "HS")) %>%  
   separate(Vendor, c("Vendor", "Medium")) %>% 
@@ -96,13 +82,12 @@ HS_NewDataFY19Q4 <- HS_NewDataFY19Q4 %>%  select(Vendor:End_Date) %>% arrange(Me
 landscape(knitr::kable(HS_NewDataFY19Q4, "latex", caption = "High School Student Audience FY19 Q4 Campaign Review: Undergraduate Degree", booktabs = T))%>%
 kable_styling(full_width = T)  %>%
   row_spec(0, angle = -45) %>%
-  pack_rows("Carousel", 1, 2) %>%
-  pack_rows("Display", 3, 4) %>%
-  pack_rows("Video", 5, 7)
+
+  pack_rows("Video", 1, 2)
   
 ```
 
-```{r}
+```{r }
 
 HS_NewDataFY20 <-  NewData1 %>% filter(Quarter == "FY20Q4" & str_detect(AdSet, "HS")) %>%  
   separate(Vendor, c("Vendor", "Medium")) %>% 
@@ -120,7 +105,7 @@ kable_styling(full_width = T)  %>%
   
 ```
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 IN_NewDataFY20Q3 <-  NewData1 %>% filter(Quarter == "FY20Q3" & str_detect(AdSet, "IN")) %>%  
   separate(Vendor, c("Vendor", "Medium")) %>% 
   arrange(Medium, Vendor)

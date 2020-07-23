@@ -5,6 +5,7 @@ date: "7/22/2020"
 output: html_document
 ---
 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
 	echo = FALSE,
@@ -25,7 +26,7 @@ library(stringr)
 library(tidyr)
 ```
 
-
+![](C:/Users/christine.iyer/Pictures/Logo.jpg)
 
 ```{r}
 NewData1 <- read.csv("C:/Users/christine.iyer/Box/quarterly-ad-analytics-projects/Flowchart - Copy.csv", header = T, stringsAsFactors = F)
@@ -73,7 +74,7 @@ nD4 <- nD_3 %>%
                               ifelse(grepl("CAR", AdSets), "CAR", "AUD" )))))) %>% select(Medium,Campaign, everything()) %>% arrange(Medium)
 ```
 
-# Product and/or Audience {.tabset .tabset-pills}
+# Product/Audience {.tabset .tabset-pills}
 
 ## High School Students {.tabset .tabset-pills}
 
@@ -92,7 +93,16 @@ kable(nD4 %>%
           Impressions_FY20Q2 = prettyNum(Impressions_FY20Q2, big.mark = ","),
           Impressions_FY20Q3 = prettyNum(Impressions_FY20Q3, big.mark = ","),
           Impressions_FY20Q4 = prettyNum(Impressions_FY20Q4, big.mark = ",")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = Impressions_FY19Q1, FY19Q2 = Impressions_FY19Q2, FY19Q3 = Impressions_FY19Q3, FY19Q4 = Impressions_FY19Q4, FY20Q1 = Impressions_FY20Q1, FY20Q2 = Impressions_FY20Q2, FY20Q3 = Impressions_FY20Q3, FY20Q4 = Impressions_FY20Q4)) %>% 
+        rename(AdSet = AdSets,
+               FY19Q1 = Impressions_FY19Q1, 
+               FY19Q2 = Impressions_FY19Q2, 
+               FY19Q3 = Impressions_FY19Q3, 
+               FY19Q4 = Impressions_FY19Q4, 
+               FY20Q1 = Impressions_FY20Q1, 
+               FY20Q2 = Impressions_FY20Q2, 
+               FY20Q3 = Impressions_FY20Q3, 
+               FY20Q4 = Impressions_FY20Q4) %>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>% 
   kable_styling("striped")  %>%
 
   pack_rows("Display", 1, 5) %>%
@@ -121,7 +131,8 @@ kable(nD4 %>%
           CTR_FY20Q2 = paste0(round(CTR_FY20Q2*100,2), "%"),
           CTR_FY20Q3 = paste0(round(CTR_FY20Q3*100,2), "%"),
           CTR_FY20Q4 = paste0(round(CTR_FY20Q4*100,2), "%")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = CTR_FY19Q1, FY19Q2 = CTR_FY19Q2, FY19Q3 = CTR_FY19Q3, FY19Q4 = CTR_FY19Q4, FY20Q1 = CTR_FY20Q1, FY20Q2 = CTR_FY20Q2, FY20Q3 = CTR_FY20Q3, FY20Q4 = CTR_FY20Q4)) %>% 
+        rename(AdSet = AdSets,FY19Q1 = CTR_FY19Q1, FY19Q2 = CTR_FY19Q2, FY19Q3 = CTR_FY19Q3, FY19Q4 = CTR_FY19Q4, FY20Q1 = CTR_FY20Q1, FY20Q2 = CTR_FY20Q2, FY20Q3 = CTR_FY20Q3, FY20Q4 = CTR_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0%", "~", .))) %>% 
   kable_styling("striped") %>%
 
   pack_rows("Display", 1, 5) %>%
@@ -148,7 +159,8 @@ kable(nD4 %>%
           UPV_FY20Q2 = prettyNum(UPV_FY20Q2, big.mark = ","),
           UPV_FY20Q3 = prettyNum(UPV_FY20Q3, big.mark = ","),
           UPV_FY20Q4 = prettyNum(UPV_FY20Q4, big.mark = ",")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = UPV_FY19Q1, FY19Q2 = UPV_FY19Q2, FY19Q3 = UPV_FY19Q3, FY19Q4 = UPV_FY19Q4, FY20Q1 = UPV_FY20Q1, FY20Q2 = UPV_FY20Q2, FY20Q3 = UPV_FY20Q3, FY20Q4 = UPV_FY20Q4)) %>% 
+        rename(AdSet = AdSets,FY19Q1 = UPV_FY19Q1, FY19Q2 = UPV_FY19Q2, FY19Q3 = UPV_FY19Q3, FY19Q4 = UPV_FY19Q4, FY20Q1 = UPV_FY20Q1, FY20Q2 = UPV_FY20Q2, FY20Q3 = UPV_FY20Q3, FY20Q4 = UPV_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>% 
   kable_styling("striped")  %>%
 
   pack_rows("Display", 1, 5) %>%
@@ -178,7 +190,8 @@ kable(nD4 %>%
           BR_FY20Q2 = paste0(round(BR_FY20Q2*100,2), "%"),
           BR_FY20Q3 = paste0(round(BR_FY20Q3*100,2), "%"),
           BR_FY20Q4 = paste0(round(BR_FY20Q4*100,2), "%")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = BR_FY19Q1, FY19Q2 = BR_FY19Q2, FY19Q3 = BR_FY19Q3, FY19Q4 = BR_FY19Q4, FY20Q1 = BR_FY20Q1, FY20Q2 = BR_FY20Q2, FY20Q3 = BR_FY20Q3, FY20Q4 = BR_FY20Q4)) %>% 
+        rename(AdSet = AdSets,FY19Q1 = BR_FY19Q1, FY19Q2 = BR_FY19Q2, FY19Q3 = BR_FY19Q3, FY19Q4 = BR_FY19Q4, FY20Q1 = BR_FY20Q1, FY20Q2 = BR_FY20Q2, FY20Q3 = BR_FY20Q3, FY20Q4 = BR_FY20Q4) %>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0%", "~", .))) %>% 
   kable_styling("striped")  %>%
 
   pack_rows("Display", 1, 5) %>%
@@ -243,7 +256,8 @@ kable(nD4 %>%
                FY20Q1 = Impressions_FY20Q1, 
                FY20Q2 = Impressions_FY20Q2, 
                FY20Q3 = Impressions_FY20Q3, 
-               FY20Q4 = Impressions_FY20Q4)) %>% 
+               FY20Q4 = Impressions_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>%  
   kable_styling("striped")  %>%
   pack_rows("Display", 1, 4) %>%
   pack_rows("Story", 5, 5) %>%
@@ -272,7 +286,8 @@ kable(nD4 %>%
           CTR_FY20Q2 = paste0(round(CTR_FY20Q2*100,2), "%"),
           CTR_FY20Q3 = paste0(round(CTR_FY20Q3*100,2), "%"),
           CTR_FY20Q4 = paste0(round(CTR_FY20Q4*100,2), "%")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = CTR_FY19Q1, FY19Q2 = CTR_FY19Q2, FY19Q3 = CTR_FY19Q3, FY19Q4 = CTR_FY19Q4, FY20Q1 = CTR_FY20Q1, FY20Q2 = CTR_FY20Q2, FY20Q3 = CTR_FY20Q3, FY20Q4 = CTR_FY20Q4)) %>% 
+        rename(AdSet = AdSets,FY19Q1 = CTR_FY19Q1, FY19Q2 = CTR_FY19Q2, FY19Q3 = CTR_FY19Q3, FY19Q4 = CTR_FY19Q4, FY20Q1 = CTR_FY20Q1, FY20Q2 = CTR_FY20Q2, FY20Q3 = CTR_FY20Q3, FY20Q4 = CTR_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0%", "~", .))) %>% 
   kable_styling("striped")  %>%
   pack_rows("Display", 1, 4) %>%
   pack_rows("Story", 5, 5) %>%
@@ -299,7 +314,8 @@ kable(nD4 %>%
           UPV_FY20Q2 = prettyNum(UPV_FY20Q2, big.mark = ","),
           UPV_FY20Q3 = prettyNum(UPV_FY20Q3, big.mark = ","),
           UPV_FY20Q4 = prettyNum(UPV_FY20Q4, big.mark = ",")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = UPV_FY19Q1, FY19Q2 = UPV_FY19Q2, FY19Q3 = UPV_FY19Q3, FY19Q4 = UPV_FY19Q4, FY20Q1 = UPV_FY20Q1, FY20Q2 = UPV_FY20Q2, FY20Q3 = UPV_FY20Q3, FY20Q4 = UPV_FY20Q4)) %>% 
+        rename(AdSet = AdSets,FY19Q1 = UPV_FY19Q1, FY19Q2 = UPV_FY19Q2, FY19Q3 = UPV_FY19Q3, FY19Q4 = UPV_FY19Q4, FY20Q1 = UPV_FY20Q1, FY20Q2 = UPV_FY20Q2, FY20Q3 = UPV_FY20Q3, FY20Q4 = UPV_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>% 
   kable_styling("striped")  %>%
   pack_rows("Display", 1, 4) %>%
   pack_rows("Story", 5, 5) %>%
@@ -329,7 +345,8 @@ kable(nD4 %>%
           BR_FY20Q2 = paste0(round(BR_FY20Q2*100,2), "%"),
           BR_FY20Q3 = paste0(round(BR_FY20Q3*100,2), "%"),
           BR_FY20Q4 = paste0(round(BR_FY20Q4*100,2), "%")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = BR_FY19Q1, FY19Q2 = BR_FY19Q2, FY19Q3 = BR_FY19Q3, FY19Q4 = BR_FY19Q4, FY20Q1 = BR_FY20Q1, FY20Q2 = BR_FY20Q2, FY20Q3 = BR_FY20Q3, FY20Q4 = BR_FY20Q4)) %>% 
+        rename(AdSet = AdSets,FY19Q1 = BR_FY19Q1, FY19Q2 = BR_FY19Q2, FY19Q3 = BR_FY19Q3, FY19Q4 = BR_FY19Q4, FY20Q1 = BR_FY20Q1, FY20Q2 = BR_FY20Q2, FY20Q3 = BR_FY20Q3, FY20Q4 = BR_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0%", "~", .))) %>% 
   kable_styling("striped")  %>%
   pack_rows("Display", 1, 4) %>%
   pack_rows("Story", 5, 5) %>%
@@ -391,7 +408,8 @@ kable(nD4 %>%
                FY20Q1 = Impressions_FY20Q1, 
                FY20Q2 = Impressions_FY20Q2, 
                FY20Q3 = Impressions_FY20Q3, 
-               FY20Q4 = Impressions_FY20Q4)) %>% 
+               FY20Q4 = Impressions_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>%  
   kable_styling("striped")  %>%
   pack_rows("Display", 1, 7) %>%
   pack_rows("Text", 8, 8) %>%
@@ -419,7 +437,8 @@ kable(nD4 %>%
           CTR_FY20Q2 = paste0(round(CTR_FY20Q2*100,2), "%"),
           CTR_FY20Q3 = paste0(round(CTR_FY20Q3*100,2), "%"),
           CTR_FY20Q4 = paste0(round(CTR_FY20Q4*100,2), "%")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = CTR_FY19Q1, FY19Q2 = CTR_FY19Q2, FY19Q3 = CTR_FY19Q3, FY19Q4 = CTR_FY19Q4, FY20Q1 = CTR_FY20Q1, FY20Q2 = CTR_FY20Q2, FY20Q3 = CTR_FY20Q3, FY20Q4 = CTR_FY20Q4)) %>% 
+        rename(AdSet = AdSets,FY19Q1 = CTR_FY19Q1, FY19Q2 = CTR_FY19Q2, FY19Q3 = CTR_FY19Q3, FY19Q4 = CTR_FY19Q4, FY20Q1 = CTR_FY20Q1, FY20Q2 = CTR_FY20Q2, FY20Q3 = CTR_FY20Q3, FY20Q4 = CTR_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0%", "~", .))) %>% 
   kable_styling("striped")  %>%
   pack_rows("Display", 1, 7) %>%
   pack_rows("Text", 8, 8) %>%
@@ -445,7 +464,8 @@ kable(nD4 %>%
           UPV_FY20Q2 = prettyNum(UPV_FY20Q2, big.mark = ","),
           UPV_FY20Q3 = prettyNum(UPV_FY20Q3, big.mark = ","),
           UPV_FY20Q4 = prettyNum(UPV_FY20Q4, big.mark = ",")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = UPV_FY19Q1, FY19Q2 = UPV_FY19Q2, FY19Q3 = UPV_FY19Q3, FY19Q4 = UPV_FY19Q4, FY20Q1 = UPV_FY20Q1, FY20Q2 = UPV_FY20Q2, FY20Q3 = UPV_FY20Q3, FY20Q4 = UPV_FY20Q4)) %>% 
+        rename(AdSet = AdSets,FY19Q1 = UPV_FY19Q1, FY19Q2 = UPV_FY19Q2, FY19Q3 = UPV_FY19Q3, FY19Q4 = UPV_FY19Q4, FY20Q1 = UPV_FY20Q1, FY20Q2 = UPV_FY20Q2, FY20Q3 = UPV_FY20Q3, FY20Q4 = UPV_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>% 
   kable_styling("striped")  %>%
   pack_rows("Display", 1, 7) %>%
   pack_rows("Text", 8, 8) %>%
@@ -474,7 +494,8 @@ kable(nD4 %>%
           BR_FY20Q2 = paste0(round(BR_FY20Q2*100,2), "%"),
           BR_FY20Q3 = paste0(round(BR_FY20Q3*100,2), "%"),
           BR_FY20Q4 = paste0(round(BR_FY20Q4*100,2), "%")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = BR_FY19Q1, FY19Q2 = BR_FY19Q2, FY19Q3 = BR_FY19Q3, FY19Q4 = BR_FY19Q4, FY20Q1 = BR_FY20Q1, FY20Q2 = BR_FY20Q2, FY20Q3 = BR_FY20Q3, FY20Q4 = BR_FY20Q4)) %>% 
+        rename(AdSet = AdSets,FY19Q1 = BR_FY19Q1, FY19Q2 = BR_FY19Q2, FY19Q3 = BR_FY19Q3, FY19Q4 = BR_FY19Q4, FY20Q1 = BR_FY20Q1, FY20Q2 = BR_FY20Q2, FY20Q3 = BR_FY20Q3, FY20Q4 = BR_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0%", "~", .))) %>% 
   kable_styling("striped")  %>%
   pack_rows("Display", 1, 7) %>%
   pack_rows("Text", 8, 8) %>%
@@ -535,7 +556,8 @@ kable(nD4 %>%
                FY20Q1 = Impressions_FY20Q1, 
                FY20Q2 = Impressions_FY20Q2, 
                FY20Q3 = Impressions_FY20Q3, 
-               FY20Q4 = Impressions_FY20Q4)) %>% 
+               FY20Q4 = Impressions_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>% 
   kable_styling("striped")  %>%
   pack_rows("Display", 1, 5) %>%
   pack_rows("Text", 6, 7) %>%
@@ -563,7 +585,8 @@ kable(nD4 %>%
           CTR_FY20Q2 = paste0(round(CTR_FY20Q2*100,2), "%"),
           CTR_FY20Q3 = paste0(round(CTR_FY20Q3*100,2), "%"),
           CTR_FY20Q4 = paste0(round(CTR_FY20Q4*100,2), "%")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = CTR_FY19Q1, FY19Q2 = CTR_FY19Q2, FY19Q3 = CTR_FY19Q3, FY19Q4 = CTR_FY19Q4, FY20Q1 = CTR_FY20Q1, FY20Q2 = CTR_FY20Q2, FY20Q3 = CTR_FY20Q3, FY20Q4 = CTR_FY20Q4)) %>% 
+        rename(AdSet = AdSets,FY19Q1 = CTR_FY19Q1, FY19Q2 = CTR_FY19Q2, FY19Q3 = CTR_FY19Q3, FY19Q4 = CTR_FY19Q4, FY20Q1 = CTR_FY20Q1, FY20Q2 = CTR_FY20Q2, FY20Q3 = CTR_FY20Q3, FY20Q4 = CTR_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0%", "~", .))) %>% 
   kable_styling("striped")  %>%
   pack_rows("Display", 1, 5) %>%
   pack_rows("Text", 6, 7) %>%
@@ -589,7 +612,8 @@ kable(nD4 %>%
           UPV_FY20Q2 = prettyNum(UPV_FY20Q2, big.mark = ","),
           UPV_FY20Q3 = prettyNum(UPV_FY20Q3, big.mark = ","),
           UPV_FY20Q4 = prettyNum(UPV_FY20Q4, big.mark = ",")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = UPV_FY19Q1, FY19Q2 = UPV_FY19Q2, FY19Q3 = UPV_FY19Q3, FY19Q4 = UPV_FY19Q4, FY20Q1 = UPV_FY20Q1, FY20Q2 = UPV_FY20Q2, FY20Q3 = UPV_FY20Q3, FY20Q4 = UPV_FY20Q4)) %>% 
+        rename(AdSet = AdSets,FY19Q1 = UPV_FY19Q1, FY19Q2 = UPV_FY19Q2, FY19Q3 = UPV_FY19Q3, FY19Q4 = UPV_FY19Q4, FY20Q1 = UPV_FY20Q1, FY20Q2 = UPV_FY20Q2, FY20Q3 = UPV_FY20Q3, FY20Q4 = UPV_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>% 
   kable_styling("striped")  %>%
   pack_rows("Display", 1, 5) %>%
   pack_rows("Text", 6, 7) %>%
@@ -618,7 +642,8 @@ kable(nD4 %>%
           BR_FY20Q2 = paste0(round(BR_FY20Q2*100,2), "%"),
           BR_FY20Q3 = paste0(round(BR_FY20Q3*100,2), "%"),
           BR_FY20Q4 = paste0(round(BR_FY20Q4*100,2), "%")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = BR_FY19Q1, FY19Q2 = BR_FY19Q2, FY19Q3 = BR_FY19Q3, FY19Q4 = BR_FY19Q4, FY20Q1 = BR_FY20Q1, FY20Q2 = BR_FY20Q2, FY20Q3 = BR_FY20Q3, FY20Q4 = BR_FY20Q4)) %>% 
+        rename(AdSet = AdSets,FY19Q1 = BR_FY19Q1, FY19Q2 = BR_FY19Q2, FY19Q3 = BR_FY19Q3, FY19Q4 = BR_FY19Q4, FY20Q1 = BR_FY20Q1, FY20Q2 = BR_FY20Q2, FY20Q3 = BR_FY20Q3, FY20Q4 = BR_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0%", "~", .))) %>% 
   kable_styling("striped")  %>%
   pack_rows("Display", 1, 5) %>%
   pack_rows("Text", 6, 7) %>%
@@ -672,7 +697,8 @@ kable(nD4 %>%
           Impressions_FY20Q2 = prettyNum(Impressions_FY20Q2, big.mark = ","),
           Impressions_FY20Q3 = prettyNum(Impressions_FY20Q3, big.mark = ","),
           Impressions_FY20Q4 = prettyNum(Impressions_FY20Q4, big.mark = ",")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = Impressions_FY19Q1, FY19Q2 = Impressions_FY19Q2, FY19Q3 = Impressions_FY19Q3, FY19Q4 = Impressions_FY19Q4, FY20Q1 = Impressions_FY20Q1, FY20Q2 = Impressions_FY20Q2, FY20Q3 = Impressions_FY20Q3, FY20Q4 = Impressions_FY20Q4)) %>% 
+        rename(AdSet = AdSets,FY19Q1 = Impressions_FY19Q1, FY19Q2 = Impressions_FY19Q2, FY19Q3 = Impressions_FY19Q3, FY19Q4 = Impressions_FY19Q4, FY20Q1 = Impressions_FY20Q1, FY20Q2 = Impressions_FY20Q2, FY20Q3 = Impressions_FY20Q3, FY20Q4 = Impressions_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>%  
   kable_styling("striped")  %>%
   pack_rows("Carousel", 1,2) %>% 
   pack_rows("Display", 3, 6) %>%
@@ -700,7 +726,8 @@ kable(nD4 %>%
           CTR_FY20Q2 = paste0(round(CTR_FY20Q2*100,2), "%"),
           CTR_FY20Q3 = paste0(round(CTR_FY20Q3*100,2), "%"),
           CTR_FY20Q4 = paste0(round(CTR_FY20Q4*100,2), "%")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = CTR_FY19Q1, FY19Q2 = CTR_FY19Q2, FY19Q3 = CTR_FY19Q3, FY19Q4 = CTR_FY19Q4, FY20Q1 = CTR_FY20Q1, FY20Q2 = CTR_FY20Q2, FY20Q3 = CTR_FY20Q3, FY20Q4 = CTR_FY20Q4)) %>% 
+        rename(AdSet = AdSets,FY19Q1 = CTR_FY19Q1, FY19Q2 = CTR_FY19Q2, FY19Q3 = CTR_FY19Q3, FY19Q4 = CTR_FY19Q4, FY20Q1 = CTR_FY20Q1, FY20Q2 = CTR_FY20Q2, FY20Q3 = CTR_FY20Q3, FY20Q4 = CTR_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0%", "~", .))) %>% 
   kable_styling("striped")  %>%
   pack_rows("Carousel", 1,2) %>% 
   pack_rows("Display", 3, 6) %>%
@@ -726,7 +753,8 @@ kable(nD4 %>%
           UPV_FY20Q2 = prettyNum(UPV_FY20Q2, big.mark = ","),
           UPV_FY20Q3 = prettyNum(UPV_FY20Q3, big.mark = ","),
           UPV_FY20Q4 = prettyNum(UPV_FY20Q4, big.mark = ",")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = UPV_FY19Q1, FY19Q2 = UPV_FY19Q2, FY19Q3 = UPV_FY19Q3, FY19Q4 = UPV_FY19Q4, FY20Q1 = UPV_FY20Q1, FY20Q2 = UPV_FY20Q2, FY20Q3 = UPV_FY20Q3, FY20Q4 = UPV_FY20Q4)) %>% 
+        rename(AdSet = AdSets,FY19Q1 = UPV_FY19Q1, FY19Q2 = UPV_FY19Q2, FY19Q3 = UPV_FY19Q3, FY19Q4 = UPV_FY19Q4, FY20Q1 = UPV_FY20Q1, FY20Q2 = UPV_FY20Q2, FY20Q3 = UPV_FY20Q3, FY20Q4 = UPV_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>% 
   kable_styling("striped")  %>%
   pack_rows("Carousel", 1,2) %>% 
   pack_rows("Display", 3, 6) %>%
@@ -755,7 +783,8 @@ kable(nD4 %>%
           BR_FY20Q2 = paste0(round(BR_FY20Q2*100,2), "%"),
           BR_FY20Q3 = paste0(round(BR_FY20Q3*100,2), "%"),
           BR_FY20Q4 = paste0(round(BR_FY20Q4*100,2), "%")) %>% 
-        rename(AdSet = AdSets,FY19Q1 = BR_FY19Q1, FY19Q2 = BR_FY19Q2, FY19Q3 = BR_FY19Q3, FY19Q4 = BR_FY19Q4, FY20Q1 = BR_FY20Q1, FY20Q2 = BR_FY20Q2, FY20Q3 = BR_FY20Q3, FY20Q4 = BR_FY20Q4)) %>% 
+        rename(AdSet = AdSets,FY19Q1 = BR_FY19Q1, FY19Q2 = BR_FY19Q2, FY19Q3 = BR_FY19Q3, FY19Q4 = BR_FY19Q4, FY20Q1 = BR_FY20Q1, FY20Q2 = BR_FY20Q2, FY20Q3 = BR_FY20Q3, FY20Q4 = BR_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q1", "FY19Q2", "FY19Q3", "FY19Q4","FY20Q1", "FY20Q2", "FY20Q3", "FY20Q4")), ~ifelse( . == "0%", "~", .))) %>% 
   kable_styling("striped")  %>%
   pack_rows("Carousel", 1,2) %>% 
   pack_rows("Display", 3, 6) %>%
@@ -835,7 +864,12 @@ kable(nD4 %>%
           # Impressions_FY20Q2 = prettyNum(Impressions_FY20Q2, big.mark = ","),
           Impressions_FY20Q3 = prettyNum(Impressions_FY20Q3, big.mark = ","),
           Impressions_FY20Q4 = prettyNum(Impressions_FY20Q4, big.mark = ",")) %>% 
-        rename(AdSet = AdSets, FY19Q3 = Impressions_FY19Q3, FY19Q4 = Impressions_FY19Q4,  FY20Q3 = Impressions_FY20Q3, FY20Q4 = Impressions_FY20Q4)) %>% 
+        rename(AdSet = AdSets, 
+               FY19Q3 = Impressions_FY19Q3, 
+               FY19Q4 = Impressions_FY19Q4,  
+               FY20Q3 = Impressions_FY20Q3, 
+               FY20Q4 = Impressions_FY20Q4) %>%
+    mutate_at(vars(c("FY19Q3", "FY19Q4","FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>% 
   kable_styling("striped")  %>%
   pack_rows("Carousel", 1,2) %>% 
   pack_rows("Display", 3, 6) %>%
@@ -863,7 +897,8 @@ kable(nD4 %>%
           # CTR_FY20Q2 = paste0(round(CTR_FY20Q2*100,2), "%"),
           CTR_FY20Q3 = paste0(round(CTR_FY20Q3*100,2), "%"),
           CTR_FY20Q4 = paste0(round(CTR_FY20Q4*100,2), "%")) %>% 
-        rename(AdSet = AdSets, FY19Q3 = CTR_FY19Q3, FY19Q4 = CTR_FY19Q4, FY20Q3 = CTR_FY20Q3, FY20Q4 = CTR_FY20Q4)) %>%
+        rename(AdSet = AdSets, FY19Q3 = CTR_FY19Q3, FY19Q4 = CTR_FY19Q4, FY20Q3 = CTR_FY20Q3, FY20Q4 = CTR_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q3", "FY19Q4","FY20Q3", "FY20Q4")), ~ifelse( . == "0%", "~", .))) %>%
   kable_styling("striped")  %>%
   pack_rows("Carousel", 1,2) %>% 
   pack_rows("Display", 3, 6) %>%
@@ -887,7 +922,8 @@ kable(nD4 %>%
 
           UPV_FY20Q3 = prettyNum(UPV_FY20Q3, big.mark = ","),
           UPV_FY20Q4 = prettyNum(UPV_FY20Q4, big.mark = ",")) %>% 
-        rename(AdSet = AdSets,FY19Q3 = UPV_FY19Q3, FY19Q4 = UPV_FY19Q4,  FY20Q3 = UPV_FY20Q3, FY20Q4 = UPV_FY20Q4)) %>%
+        rename(AdSet = AdSets,FY19Q3 = UPV_FY19Q3, FY19Q4 = UPV_FY19Q4,  FY20Q3 = UPV_FY20Q3, FY20Q4 = UPV_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q3", "FY19Q4","FY20Q3", "FY20Q4")), ~ifelse( . == "0", "~", .))) %>%
   kable_styling("striped")  %>%
   pack_rows("Carousel", 1,2) %>% 
   pack_rows("Display", 3, 6) %>%
@@ -918,7 +954,8 @@ kable(nD4 %>%
                FY19Q3 = BR_FY19Q3, 
                FY19Q4 = BR_FY19Q4,  
                FY20Q3 = BR_FY20Q3, 
-               FY20Q4 = BR_FY20Q4)) %>%
+               FY20Q4 = BR_FY20Q4)%>%
+    mutate_at(vars(c("FY19Q3", "FY19Q4","FY20Q3", "FY20Q4")), ~ifelse( . == "0%", "~", .))) %>%
   kable_styling("striped")  %>%
   pack_rows("Carousel", 1,2) %>% 
   pack_rows("Display", 3, 6) %>%
